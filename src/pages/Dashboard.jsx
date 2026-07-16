@@ -5,12 +5,24 @@ function Dashboard() {
     <>
       <Navbar />
 
-      <div style={{ padding: "20px" }}>
+      <div className="container">
         <h1>Dashboard</h1>
 
-        <h3>Welcome to EventHub Planner!</h3>
+        <br />
 
-        <p>Manage your personal events from one place.</p>
+        <div className="card">
+          <h2>Welcome to EventHub Planner</h2>
+
+          <p>Manage all your personal events in one place.</p>
+
+          <br />
+
+          <h3>Quick Stats</h3>
+
+          <p>Upcoming Events: 2</p>
+          <p>Completed Events: 5</p>
+          <p>Cancelled Events: 1</p>
+        </div>
       </div>
     </>
   );
