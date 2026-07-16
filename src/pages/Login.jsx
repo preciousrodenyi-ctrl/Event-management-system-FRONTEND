@@ -1,26 +1,60 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function Login() {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  function handleChange(e) {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    console.log(formData);
+
+    // We'll connect this to Flask next.
+    // Example:
+    // await api.post("/login", formData);
+
+    navigate("/dashboard");
+  }
+
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>EventHub Planner</h1>
+    <form onSubmit={handleSubmit}>
+      <h1>Login</h1>
 
-      <h2>Login</h2>
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        value={formData.username}
+        onChange={handleChange}
+      />
 
-      <input type="text" placeholder="Username" />
-      <br />
-      <br />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+      />
 
-      <input type="password" placeholder="Password" />
-      <br />
-      <br />
-
-      <button>Login</button>
+      <button type="submit">Login</button>
 
       <p>
-        Don't have an account? <Link to="/signup">Sign Up</Link>
+        No account? <Link to="/signup">Sign Up</Link>
       </p>
-    </div>
+    </form>
   );
 }
 
