@@ -1,14 +1,27 @@
 import Navbar from "../components/Navbar";
+import EventForm from "../components/EventForm";
 
-function CreateEvent() {
-  return (
-    <>
-      <Navbar />
-      <div style={{ padding: "20px" }}>
-        <h1>Create Event</h1>
-      </div>
-    </>
-  );
+
+function CreateEvent(){
+
+return(
+
+<>
+
+<Navbar/>
+
+<div className="container">
+
+<EventForm/>
+
+</div>
+
+
+</>
+
+)
+
 }
+
 
 export default CreateEvent;

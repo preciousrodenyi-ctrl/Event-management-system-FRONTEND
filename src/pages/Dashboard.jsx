@@ -1,31 +1,72 @@
 import Navbar from "../components/Navbar";
+import Hero from "../components/Hero";
 
-function Dashboard() {
-  return (
-    <>
-      <Navbar />
 
-      <div className="container">
-        <h1>Dashboard</h1>
+function Dashboard(){
 
-        <br />
+return (
 
-        <div className="card">
-          <h2>Welcome to EventHub Planner</h2>
+<>
 
-          <p>Manage all your personal events in one place.</p>
+<Navbar/>
 
-          <br />
 
-          <h3>Quick Stats</h3>
+<div className="container">
 
-          <p>Upcoming Events: 2</p>
-          <p>Completed Events: 5</p>
-          <p>Cancelled Events: 1</p>
-        </div>
-      </div>
-    </>
-  );
+
+<h1>
+EventHub Dashboard
+</h1>
+
+
+<div className="stats">
+
+
+<div className="stat-card">
+
+<h2>0</h2>
+
+<p>
+My Events
+</p>
+
+</div>
+
+
+
+<div className="stat-card">
+
+<h2>0</h2>
+
+<p>
+Upcoming
+</p>
+
+</div>
+
+
+
+<div className="stat-card">
+
+<h2>0</h2>
+
+<p>
+Completed
+</p>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+</>
+
+)
+
 }
+
 
 export default Dashboard;

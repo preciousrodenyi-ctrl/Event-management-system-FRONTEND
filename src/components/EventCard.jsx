@@ -1,24 +1,53 @@
-function EventCard({ event }) {
-  return (
-    <div className="card">
-      <h2>{event.title}</h2>
+function EventCard({event}){
 
-      <p>
-        <strong>Location:</strong> {event.location}
-      </p>
 
-      <p>
-        <strong>Date:</strong> {event.date}
-      </p>
+return(
 
-      <p>
-        <strong>Status:</strong> {event.status}
-      </p>
+<div className="card">
 
-      <button>Edit</button>
-      <button style={{ marginLeft: "10px" }}>Delete</button>
-    </div>
-  );
+
+<img
+src={event.image}
+alt={event.title}
+className="event-image"
+/>
+
+
+<h2>
+{event.title}
+</h2>
+
+
+<p>
+ {event.location}
+</p>
+
+
+<p>
+{event.date}
+</p>
+
+
+<p>
+Category: {event.category}
+</p>
+
+
+<button>
+Edit
+</button>
+
+
+<button>
+Delete
+</button>
+
+
+</div>
+
+)
+
 }
+
 
 export default EventCard;
