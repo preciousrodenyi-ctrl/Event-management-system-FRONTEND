@@ -5,6 +5,8 @@ import api from "../services/api";
 function Login() {
   const navigate = useNavigate();
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -22,7 +24,6 @@ function Login() {
 
     console.log(formData);
 
-    // We'll connect this to Flask next.
     // Example:
     // await api.post("/login", formData);
 
@@ -30,31 +31,54 @@ function Login() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Login</h1>
+    <div className="login-container">
+      <div className="login-card">
 
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={formData.username}
-        onChange={handleChange}
-      />
+        <h1>Welcome Back </h1>
 
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-      />
+        <p>Login to manage your events.</p>
 
-      <button type="submit">Login</button>
+        <form onSubmit={handleSubmit}>
 
-      <p>
-        No account? <Link to="/signup">Sign Up</Link>
-      </p>
-    </form>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+
+          <div className="password-container">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+
+            <button
+              type="button"
+              className="eye-btn"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "" : "..."}
+            </button>
+          </div>
+
+          <button className="login-btn" type="submit">
+            Login
+          </button>
+
+        </form>
+
+        <p className="signup-link">
+          Don't have an account?{" "}
+          <Link to="/signup">Sign Up</Link>
+        </p>
+
+      </div>
+    </div>
   );
 }
 
