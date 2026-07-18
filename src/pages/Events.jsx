@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import EventCard from "../components/EventCard";
 
@@ -10,7 +11,14 @@ import charityImage from "../assets/Charity gala.jpg";
 import foodImage from "../assets/Food Event.jpg";
 
 function Events() {
+
+  const [search, setSearch] = useState("");
+
+  const [category, setCategory] =
+    useState("All");
+
   const events = [
+
     {
       id: 1,
       title: "Tech Conference",
@@ -19,6 +27,7 @@ function Events() {
       category: "Technology",
       image: technologyImage,
     },
+
     {
       id: 2,
       title: "Birthday Party",
@@ -27,6 +36,7 @@ function Events() {
       category: "Social",
       image: birthdayImage,
     },
+
     {
       id: 3,
       title: "Music Festival",
@@ -35,6 +45,7 @@ function Events() {
       category: "Entertainment",
       image: musicImage,
     },
+
     {
       id: 4,
       title: "Art Exhibition",
@@ -43,6 +54,7 @@ function Events() {
       category: "Art",
       image: artImage,
     },
+
     {
       id: 5,
       title: "Startup Pitch",
@@ -51,6 +63,7 @@ function Events() {
       category: "Business",
       image: startupImage,
     },
+
     {
       id: 6,
       title: "Charity Gala",
@@ -59,6 +72,7 @@ function Events() {
       category: "Charity",
       image: charityImage,
     },
+
     {
       id: 7,
       title: "Food Festival",
@@ -67,23 +81,163 @@ function Events() {
       category: "Food",
       image: foodImage,
     },
+
   ];
 
+
+  const filteredEvents =
+    events.filter((event) => {
+
+      const matchesSearch =
+
+        event.title
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          )
+
+        ||
+
+        event.location
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          );
+
+
+      const matchesCategory =
+
+        category === "All"
+
+        ||
+
+        event.category === category;
+
+
+      return (
+        matchesSearch &&
+        matchesCategory
+      );
+
+    });
+
+
   return (
+
     <>
+
       <Navbar />
 
-      <div className="container">
-        <h1>My Events</h1>
+      <main className="events-page">
 
-        <div className="event-grid">
-          {events.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
-      </div>
+        <section className="events-header">
+
+          <h1>
+            Discover Amazing Events 
+          </h1>
+
+          <p>
+            Find events happening around you.
+          </p>
+
+        </section>
+
+
+        <section className="event-controls">
+
+          <input
+            type="text"
+            placeholder="🔍 Search events..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+          />
+
+
+          <select
+            value={category}
+            onChange={(e) =>
+              setCategory(e.target.value)
+            }
+          >
+
+            <option value="All">
+              All Categories
+            </option>
+
+            <option value="Technology">
+              Technology
+            </option>
+
+            <option value="Social">
+              Social
+            </option>
+
+            <option value="Entertainment">
+              Entertainment
+            </option>
+
+            <option value="Art">
+              Art
+            </option>
+
+            <option value="Business">
+              Business
+            </option>
+
+            <option value="Charity">
+              Charity
+            </option>
+
+            <option value="Food">
+              Food
+            </option>
+
+          </select>
+
+        </section>
+
+
+        <section className="event-grid">
+
+          {filteredEvents.length > 0 ? (
+
+            filteredEvents.map(
+              (event) => (
+
+                <EventCard
+                  key={event.id}
+                  event={event}
+                />
+
+              )
+            )
+
+          ) : (
+
+            <div className="no-events">
+
+              <h2>
+                 No events found
+              </h2>
+
+              <p>
+                Try searching for another event.
+              </p>
+
+            </div>
+
+          )}
+
+        </section>
+
+      </main>
+
     </>
+
   );
+
 }
 
 export default Events;

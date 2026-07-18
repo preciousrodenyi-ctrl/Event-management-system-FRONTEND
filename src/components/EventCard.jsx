@@ -1,53 +1,43 @@
-function EventCard({event}){
+import { Link } from "react-router-dom";
 
+function EventCard({ event }) {
+  return (
+    <div className="event-card">
 
-return(
+      <img
+        src={event.image}
+        alt={event.title}
+        className="event-card-image"
+      />
 
-<div className="card">
+      <div className="event-card-content">
 
+        <span className="event-category">
+          {event.category}
+        </span>
 
-<img
-src={event.image}
-alt={event.title}
-className="event-image"
-/>
+        <h2>
+          {event.title}
+        </h2>
 
+        <p>
+           {event.location}
+        </p>
 
-<h2>
-{event.title}
-</h2>
+        <p>
+           {event.date}
+        </p>
 
+        <Link to={`/events/${event.id}`}>
+          <button className="view-event-btn">
+            View Details
+          </button>
+        </Link>
 
-<p>
- {event.location}
-</p>
+      </div>
 
-
-<p>
-{event.date}
-</p>
-
-
-<p>
-Category: {event.category}
-</p>
-
-
-<button>
-Edit
-</button>
-
-
-<button>
-Delete
-</button>
-
-
-</div>
-
-)
-
+    </div>
+  );
 }
-
 
 export default EventCard;

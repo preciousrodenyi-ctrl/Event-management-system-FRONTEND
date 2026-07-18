@@ -1,89 +1,80 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+
+  const isLoggedIn = localStorage.getItem("token");
 
   function handleLogout() {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    localStorage.removeItem("user");
+
+    navigate("/");
   }
 
-
   return (
-
     <nav className="navbar">
 
-
-      <div className="logo">
-
-        🎉 EventHub
-
-      </div>
-
-
+      <Link to="/" className="logo">
+        <span></span>
+        EventHub
+      </Link>
 
       <div className="nav-links">
-
 
         <Link to="/">
           Home
         </Link>
 
+        {isLoggedIn && (
+          <>
+            <Link to="/dashboard">
+              Dashboard
+            </Link>
 
-        <Link to="/dashboard">
-          Dashboard
-        </Link>
+            <Link to="/events">
+              Events
+            </Link>
 
-
-        <Link to="/events">
-          Events
-        </Link>
-
-
-        <Link to="/create-event">
-          Create Event
-        </Link>
-
+            <Link to="/create-event">
+              Add Event
+            </Link>
+          </>
+        )}
 
       </div>
-
-
 
       <div className="nav-actions">
 
+        {!isLoggedIn ? (
+          <>
+            <Link
+              to="/login"
+              className="login-link"
+            >
+              Login
+            </Link>
 
-        <Link 
-        className="login-link"
-        to="/login">
-          Login
-        </Link>
-
-
-
-        <Link 
-        className="signup-btn"
-        to="/signup">
-          Sign Up
-        </Link>
-
-
-
-        <button 
-        className="logout-btn"
-        onClick={handleLogout}>
-
-          Logout
-
-        </button>
-
+            <Link
+              to="/signup"
+              className="signup-btn"
+            >
+              Sign Up
+            </Link>
+          </>
+        ) : (
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        )}
 
       </div>
 
-
     </nav>
-
   );
-
 }
-
 
 export default Navbar;
