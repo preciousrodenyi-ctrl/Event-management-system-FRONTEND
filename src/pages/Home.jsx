@@ -1,40 +1,44 @@
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
+
+import heroImage from "../assets/Technology event.jpg";
+import musicImage from "../assets/Music festival(5).jpeg";
+import artImage from "../assets/Art event.jpg";
 
 function Home() {
   return (
-    <>
-      <Navbar />
+    <div className="home">
 
-      <main className="landing-page">
+      {/* HERO SECTION */}
+      <section className="hero">
 
-        <div className="landing-content">
+        <div className="hero-text">
 
-          <span className="welcome-badge">
-            Welcome to EventHub 
+          <span className="hero-badge">
+            Welcome to EventHub
           </span>
 
           <h1>
-            Discover Events.
+            Discover Amazing
             <br />
-            Create Memories.
+            Events Near You
           </h1>
 
           <p>
-            Find exciting events, connect with people,
-            and create unforgettable experiences.
+            EventHub helps you discover, create and manage events.
+            From technology conferences to music festivals,
+            everything is in one place.
           </p>
 
-          <div className="landing-buttons">
+          <div className="hero-buttons">
 
-            <Link to="/events">
-              <button>
+            <Link to="/login">
+              <button className="primary-btn">
                 Explore Events
               </button>
             </Link>
 
             <Link to="/signup">
-              <button className="secondary-button">
+              <button className="secondary-btn">
                 Get Started
               </button>
             </Link>
@@ -43,122 +47,158 @@ function Home() {
 
         </div>
 
-        <div className="landing-image">
-
-          <img
-            src="/src/assets/Technology event.jpg"
-            alt="Technology event"
-          />
-
+        <div className="hero-image">
+          <img src={heroImage} alt="Event" />
         </div>
 
-      </main>
+      </section>
 
+      {/* FEATURED EVENTS */}
 
-      <section className="features-section">
+      <section className="featured-events">
 
-        <h2>
-          Everything You Need for Amazing Events
-        </h2>
+        <h2>Featured Events</h2>
 
-        <p className="features-intro">
-          EventHub makes discovering and managing events simple.
-        </p>
-
-
-        <div className="features-grid">
+        <div className="feature-grid">
 
           <div className="feature-card">
-
-            <div className="feature-icon">
-              
-            </div>
-
-            <h3>
-              Discover Events
-            </h3>
-
-            <p>
-              Find exciting events happening around you.
-            </p>
-
+            <img src={heroImage} alt="" />
+            <h3>Technology Conference</h3>
+            <p>Nairobi • Aug 10, 2026</p>
           </div>
 
-
           <div className="feature-card">
-
-            <div className="feature-icon">
-              
-            </div>
-
-            <h3>
-              Manage Events
-            </h3>
-
-            <p>
-              Create and organize your own events easily.
-            </p>
-
+            <img src={musicImage} alt="" />
+            <h3>Music Festival</h3>
+            <p>Mombasa • Oct 15, 2026</p>
           </div>
 
-
           <div className="feature-card">
-
-            <div className="feature-icon">
-              
-            </div>
-
-            <h3>
-              Connect With People
-            </h3>
-
-            <p>
-              Meet people and enjoy unforgettable experiences.
-            </p>
-
+            <img src={artImage} alt="" />
+            <h3>Art Exhibition</h3>
+            <p>Nairobi • Nov 5, 2026</p>
           </div>
 
         </div>
 
       </section>
 
+      {/* WHY CHOOSE US */}
 
-      <section className="home-call-to-action">
+      <section className="why-us">
 
-        <h2>
-          Ready to Discover Your Next Event?
-        </h2>
+        <h2>Why Choose EventHub?</h2>
+
+        <div className="why-grid">
+
+          <div className="why-card">
+            <h3>Easy Event Creation</h3>
+            <p>Create events in just a few clicks.</p>
+          </div>
+
+          <div className="why-card">
+            <h3> Manage Events</h3>
+            <p>Update and organize your events anytime.</p>
+          </div>
+
+          <div className="why-card">
+            <h3>Secure Accounts</h3>
+            <p>Your information is protected and secure.</p>
+          </div>
+
+          <div className="why-card">
+            <h3> Anywhere</h3>
+            <p>Access your events from any device.</p>
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* STATISTICS */}
+
+      <section className="stats">
+
+        <div className="stat-card">
+          <h2>500+</h2>
+          <p>Events</p>
+        </div>
+
+        <div className="stat-card">
+          <h2>2,000+</h2>
+          <p>Users</p>
+        </div>
+
+        <div className="stat-card">
+          <h2>100+</h2>
+          <p>Organizers</p>
+        </div>
+
+      </section>
+
+      {/* TESTIMONIALS */}
+
+      <section className="testimonials">
+
+        <h2>What Our Users Say</h2>
+
+        <div className="testimonial-grid">
+
+          <div className="testimonial-card">
+            
+            <p>
+              "EventHub made organizing my graduation event so easy!"
+            </p>
+            <h4>- Precious</h4>
+          </div>
+
+          <div className="testimonial-card">
+            
+            <p>
+              "A beautiful platform with everything I needed."
+            </p>
+            <h4>- Mercy</h4>
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* CALL TO ACTION */}
+
+      <section className="cta">
+
+        <h2>Ready to Join EventHub?</h2>
 
         <p>
-          Join EventHub today and start exploring amazing experiences.
+          Sign up today and start creating amazing events.
         </p>
 
         <Link to="/signup">
-          <button className="secondary-button">
-            Join EventHub
+          <button className="primary-btn">
+            Create Free Account
           </button>
         </Link>
 
       </section>
 
+      {/* FOOTER */}
 
-      <footer className="site-footer">
+      <footer className="footer">
 
-        <h3>
-           EventHub
-        </h3>
+        <h2>EventHub</h2>
 
         <p>
-          Discover. Connect. Experience.
+          Making event planning easier and more enjoyable.
         </p>
 
-        <small>
-          © 2026 EventHub. All rights reserved.
-        </small>
+        <p>
+          © 2026 EventHub. All Rights Reserved.
+        </p>
 
       </footer>
 
-    </>
+    </div>
   );
 }
 

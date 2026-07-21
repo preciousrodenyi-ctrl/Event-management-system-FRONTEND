@@ -1,74 +1,64 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 
 function Navbar() {
   const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const isLoggedIn = localStorage.getItem("token");
+  useEffect(() => {
+    checkSession();
+  }, []);
 
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  async function checkSession() {
+    try {
+      await api.get("/check_session");
+      setLoggedIn(true);
+    } catch (error) {
+      setLoggedIn(false);
+    }
+  }
 
-    navigate("/");
+  async function handleLogout() {
+    try {
+      await api.delete("/logout");
+      setLoggedIn(false);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
     <nav className="navbar">
 
-      <Link to="/" className="logo">
-        <span></span>
-        EventHub
-      </Link>
+      <div className="logo">
+        <Link to="/">EventHub</Link>
+      </div>
 
       <div className="nav-links">
 
-        <Link to="/">
-          Home
-        </Link>
-
-        {isLoggedIn && (
+        {!loggedIn ? (
           <>
-            <Link to="/dashboard">
-              Dashboard
-            </Link>
-
-            <Link to="/events">
-              Events
-            </Link>
-
-            <Link to="/create-event">
-              Add Event
-            </Link>
-          </>
-        )}
-
-      </div>
-
-      <div className="nav-actions">
-
-        {!isLoggedIn ? (
-          <>
-            <Link
-              to="/login"
-              className="login-link"
-            >
-              Login
-            </Link>
-
-            <Link
-              to="/signup"
-              className="signup-btn"
-            >
-              Sign Up
-            </Link>
+            <Link to="/">Home</Link>
+            <Link to="/login">Login</Link>
+            <Link to="/signup">Sign Up</Link>
           </>
         ) : (
-          <button
-            className="logout-btn"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <>
+            <Link to="/dashboard">Dashboard</Link>
+
+            <Link to="/events">Events</Link>
+
+            <Link to="/create-event">Add Event</Link>
+
+            <button
+              className="logout-btn"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
         )}
 
       </div>

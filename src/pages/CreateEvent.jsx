@@ -1,170 +1,105 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import api from "../services/api";
 
 function CreateEvent() {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-
     title: "",
     description: "",
     location: "",
     date: "",
     category: "",
-
   });
 
+  const [error, setError] = useState("");
 
   function handleChange(e) {
-
     setFormData({
-
       ...formData,
-
       [e.target.name]: e.target.value,
-
     });
-
   }
 
-
-  function handleSubmit(e) {
-
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    console.log(
-      "New event:",
-      formData
-    );
-
-    alert(
-      "Event created successfully! "
-    );
-
-    navigate("/events");
-
+    try {
+      await api.post("/events", formData);
+      navigate("/events");
+    } catch (err) {
+      console.log(err);
+      setError("Failed to create event.");
+    }
   }
 
-
   return (
+    <div className="form-page">
 
-    <>
+      <form className="event-form" onSubmit={handleSubmit}>
 
-      <Navbar />
+        <h1>Create New Event</h1>
 
-      <main className="create-event-page">
+        {error && <p className="error">{error}</p>}
 
-        <form
-          className="create-event-form"
-          onSubmit={handleSubmit}
+        <input
+          type="text"
+          name="title"
+          placeholder="Event Title"
+          value={formData.title}
+          onChange={handleChange}
+          required
+        />
+
+        <textarea
+          name="description"
+          placeholder="Description"
+          rows="5"
+          value={formData.description}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          value={formData.location}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="date"
+          name="date"
+          value={formData.date}
+          onChange={handleChange}
+          required
+        />
+
+        <select
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          required
         >
+          <option value="">Select Category</option>
+          <option value="Technology">Technology</option>
+          <option value="Business">Business</option>
+          <option value="Music">Music</option>
+          <option value="Sports">Sports</option>
+          <option value="Art">Art</option>
+          <option value="Education">Education</option>
+        </select>
 
-          <h1>
-            Create New Event 
-          </h1>
+        <button type="submit" className="primary-btn">
+          Create Event
+        </button>
 
-          <p>
-            Create an amazing event for people to discover.
-          </p>
-
-
-          <input
-            type="text"
-            name="title"
-            placeholder="Event title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-
-
-          <textarea
-            name="description"
-            placeholder="Describe your event..."
-            value={formData.description}
-            onChange={handleChange}
-            rows="5"
-            required
-          />
-
-
-          <input
-            type="text"
-            name="location"
-            placeholder="Location"
-            value={formData.location}
-            onChange={handleChange}
-            required
-          />
-
-
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-          />
-
-
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
-
-            <option value="">
-              Select category
-            </option>
-
-            <option value="Technology">
-              Technology
-            </option>
-
-            <option value="Social">
-              Social
-            </option>
-
-            <option value="Entertainment">
-              Entertainment
-            </option>
-
-            <option value="Art">
-              Art
-            </option>
-
-            <option value="Business">
-              Business
-            </option>
-
-            <option value="Charity">
-              Charity
-            </option>
-
-            <option value="Food">
-              Food
-            </option>
-
-          </select>
-
-
-          <button
-            type="submit"
-          >
-            Create Event
-          </button>
-
-        </form>
-
-      </main>
-
-    </>
-
+      </form>
+    </div>
   );
-
 }
 
 export default CreateEvent;

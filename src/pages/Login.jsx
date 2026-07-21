@@ -3,159 +3,108 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 function Login() {
+const navigate = useNavigate();
 
-  const navigate = useNavigate();
+const [formData, setFormData] = useState({
+username: "",
+password: "",
+});
 
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
+const [showPassword, setShowPassword] = useState(false);
+const [error, setError] = useState("");
 
-  const [showPassword, setShowPassword] = useState(false);
+function handleChange(e) {
+setFormData({
+...formData,
+[e.target.name]: e.target.value,
+});
+}
 
-  const [error, setError] = useState("");
+async function handleSubmit(e) {
+e.preventDefault();
+setError("");
 
-  function handleChange(e) {
+try {
+  await api.post("/login", formData);
 
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  navigate("/dashboard");
 
-  }
+  window.location.reload();
+} catch (err) {
+  setError("Invalid username or password.");
+}
 
-  async function handleSubmit(e) {
+}
 
-    e.preventDefault();
+return (
+<div className="auth-page">
+<div className="auth-container">
+<form onSubmit={handleSubmit} className="auth-card">
 
-    setError("");
+      <h1>Welcome Back</h1>
 
-    try {
+      <p>Login to continue to EventHub</p>
 
-      /*
-      This will connect to Flask later.
+      {error && <p className="error">{error}</p>}
 
-      const response = await api.post("/login", formData);
+      <div className="auth-form">
 
-      localStorage.setItem(
-        "token",
-        response.data.token
-      );
-      */
+        <label>Username</label>
 
-      // Temporary login for frontend testing
-      localStorage.setItem(
-        "token",
-        "demo-token"
-      );
+        <input
+          type="text"
+          name="username"
+          placeholder="Enter your username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          username: formData.username,
-        })
-      );
+        <label>Password</label>
 
-      navigate("/dashboard");
-
-    } catch (error) {
-
-      setError(
-        "Invalid username or password."
-      );
-
-    }
-
-  }
-
-  return (
-
-    <>
-
-      <div className="auth-page">
-
-        <form
-          className="auth-form"
-          onSubmit={handleSubmit}
-        >
-
-          <h1>
-            Welcome Back 
-          </h1>
-
-          <p className="auth-subtitle">
-            Login to continue to EventHub
-          </p>
-
-          {error && (
-            <p className="error-message">
-              {error}
-            </p>
-          )}
+        <div className="password-container">
 
           <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Enter your password"
+            value={formData.password}
             onChange={handleChange}
             required
           />
 
-
-          <div className="password-container">
-
-            <input
-              type={
-                showPassword
-                  ? "text"
-                  : "password"
-              }
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-
-            <button
-              type="button"
-              onClick={() =>
-                setShowPassword(!showPassword)
-              }
-            >
-              {showPassword ? "" : "👁️"}
-            </button>
-
-          </div>
-
-
           <button
-            type="submit"
-            className="auth-button"
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
           >
-            Login
+            {showPassword ? "Hide" : "Show"}
           </button>
 
+        </div>
 
-          <p className="auth-footer">
+        <p className="forgot-password">
+          <Link to="/forgot-password">
+            Forgot Password?
+          </Link>
+        </p>
 
-            Don't have an account?
-
-            <Link to="/signup">
-              Sign Up
-            </Link>
-
-          </p>
-
-        </form>
+        <button type="submit" className="auth-btn">
+          Login
+        </button>
 
       </div>
 
-    </>
+      <p className="auth-footer">
+        Don't have an account?
+        <Link to="/signup"> Sign Up</Link>
+      </p>
 
-  );
+    </form>
+  </div>
+</div>
 
+);
 }
 
 export default Login;

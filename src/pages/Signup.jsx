@@ -1,126 +1,84 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function Signup() {
+const navigate = useNavigate();
 
-  const navigate = useNavigate();
+const [formData, setFormData] = useState({
+username: "",
+email: "",
+password: "",
+});
 
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+const [showPassword, setShowPassword] = useState(false);
+const [error, setError] = useState("");
 
-  const [showPassword, setShowPassword] = useState(false);
+function handleChange(e) {
+setFormData({
+...formData,
+[e.target.name]: e.target.value,
+});
+}
 
-  const [error, setError] = useState("");
+async function handleSubmit(e) {
+e.preventDefault();
+setError("");
 
-  function handleChange(e) {
+try {
+  await api.post("/signup", formData);
 
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  navigate("/login");
+} catch (err) {
+  setError("Signup failed. Username or email may already exist.");
+}
 
-  }
+}
 
-  function handleSubmit(e) {
+return (
+<div className="auth-page">
+<div className="auth-container">
 
-    e.preventDefault();
+    <form onSubmit={handleSubmit} className="auth-card">
 
-    setError("");
+      <h1>Create Account</h1>
 
-    if (
-      formData.password !==
-      formData.confirmPassword
-    ) {
+      <p>Join EventHub today</p>
 
-      setError(
-        "Passwords do not match."
-      );
+      {error && <p className="error">{error}</p>}
 
-      return;
+      <div className="auth-form">
 
-    }
-
-    /*
-    Later this will connect to Flask:
-
-    await api.post(
-      "/signup",
-      formData
-    );
-    */
-
-    localStorage.setItem(
-      "token",
-      "demo-token"
-    );
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        username: formData.username,
-        email: formData.email,
-      })
-    );
-
-    navigate("/dashboard");
-
-  }
-
-  return (
-
-    <div className="auth-page">
-
-      <form
-        className="auth-form"
-        onSubmit={handleSubmit}
-      >
-
-        <h1>
-          Create Account 
-        </h1>
-
-        <p className="auth-subtitle">
-          Join EventHub today
-        </p>
-
-        {error && (
-          <p className="error-message">
-            {error}
-          </p>
-        )}
+        <label>Username</label>
 
         <input
           type="text"
           name="username"
-          placeholder="Username"
+          placeholder="Enter your username"
           value={formData.username}
           onChange={handleChange}
           required
         />
 
+        <label>Email Address</label>
+
         <input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="Enter your email"
           value={formData.email}
           onChange={handleChange}
           required
         />
 
+        <label>Password</label>
+
         <div className="password-container">
 
           <input
-            type={
-              showPassword
-                ? "text"
-                : "password"
-            }
+            type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Password"
+            placeholder="Create a password"
             value={formData.password}
             onChange={handleChange}
             required
@@ -128,54 +86,31 @@ function Signup() {
 
           <button
             type="button"
-            onClick={() =>
-              setShowPassword(!showPassword)
-            }
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? "" : "👁️"}
+            {showPassword ? "Hide" : "Show"}
           </button>
 
         </div>
 
-
-        <input
-          type={
-            showPassword
-              ? "text"
-              : "password"
-          }
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
-
-
-        <button
-          type="submit"
-          className="auth-button"
-        >
+        <button type="submit" className="auth-btn">
           Create Account
         </button>
 
+      </div>
 
-        <p className="auth-footer">
+      <p className="auth-footer">
+        Already have an account?
+        <Link to="/login"> Login</Link>
+      </p>
 
-          Already have an account?
+    </form>
 
-          <Link to="/login">
-            Login
-          </Link>
+  </div>
+</div>
 
-        </p>
-
-      </form>
-
-    </div>
-
-  );
-
+);
 }
 
 export default Signup;

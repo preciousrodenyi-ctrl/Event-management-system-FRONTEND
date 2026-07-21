@@ -1,167 +1,148 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import api from "../services/api";
 
 function Dashboard() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const user =
-    JSON.parse(
-      localStorage.getItem("user")
-    ) || {
-      username: "User",
-    };
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  async function fetchEvents() {
+    try {
+      const response = await api.get("/events");
+      setEvents(response.data.events);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function deleteEvent(id) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this event?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await api.delete(`/events/${id}`);
+
+      setEvents(events.filter((event) => event.id !== id));
+    } catch (error) {
+      console.log(error);
+      alert("Failed to delete event.");
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="loading">
+        <h2>Loading Dashboard...</h2>
+      </div>
+    );
+  }
 
   return (
+    <div className="dashboard">
 
-    <>
+      <h1>Dashboard</h1>
 
-      <Navbar />
+      <p>Welcome back! Here are your events.</p>
 
-      <main className="dashboard-page">
+      <div className="dashboard-stats">
 
-        <section className="dashboard-header">
+        <div className="stat-box">
+          <h2>{events.length}</h2>
+          <p>Total Events</p>
+        </div>
 
-          <div>
+        <div className="stat-box">
+          <h2>
+            {events.filter(event => new Date(event.date) >= new Date()).length}
+          </h2>
+          <p>Upcoming</p>
+        </div>
 
-            <h1>
-              Welcome back, {user.username}! 
-            </h1>
+        <div className="stat-box">
+          <h2>
+            {[...new Set(events.map(event => event.category))].length}
+          </h2>
+          <p>Categories</p>
+        </div>
 
-            <p>
-              Manage your events and discover new experiences.
-            </p>
+      </div>
 
-          </div>
+      <div className="dashboard-header">
 
-          <Link to="/create-event">
+        <h2>My Events</h2>
 
-            <button>
-              + Create Event
-            </button>
+        <Link to="/create-event">
+          <button className="add-btn">
+            + Create Event
+          </button>
+        </Link>
 
-          </Link>
+      </div>
 
-        </section>
+      {events.length === 0 ? (
+        <div className="empty-events">
 
+          <h3>No events yet.</h3>
 
-        <section className="stats">
+          <p>Create your first event.</p>
 
-          <div className="stat-card">
+        </div>
+      ) : (
+        <div className="dashboard-events">
 
-            <span className="stat-icon">
-              
-            </span>
+          {events.map((event) => (
 
-            <h2>
-              7
-            </h2>
+            <div className="dashboard-card" key={event.id}>
 
-            <p>
-              Total Events
-            </p>
+              <h3>{event.title}</h3>
 
-          </div>
+              <p><strong>Location:</strong> {event.location}</p>
 
+              <p><strong>Date:</strong> {event.date}</p>
 
-          <div className="stat-card">
+              <p><strong>Category:</strong> {event.category}</p>
 
-            <span className="stat-icon">
-              
-            </span>
+              <div className="dashboard-buttons">
 
-            <h2>
-              4
-            </h2>
+                <Link to={`/events/${event.id}`}>
+                  <button className="view-btn">
+                    View
+                  </button>
+                </Link>
 
-            <p>
-              Upcoming Events
-            </p>
+                <Link to={`/events/${event.id}/edit`}>
+                  <button className="edit-btn">
+                    Edit
+                  </button>
+                </Link>
 
-          </div>
-
-
-          <div className="stat-card">
-
-            <span className="stat-icon">
-              
-            </span>
-
-            <h2>
-              12
-            </h2>
-
-            <p>
-              Events Attended
-            </p>
-
-          </div>
-
-        </section>
-
-
-        <section className="dashboard-section">
-
-          <div className="section-heading">
-
-            <h2>
-              Quick Actions
-            </h2>
-
-          </div>
-
-
-          <div className="quick-actions">
-
-            <Link to="/events">
-
-              <div className="quick-card">
-
-                <span>
-                  🔍
-                </span>
-
-                <h3>
-                  Explore Events
-                </h3>
-
-                <p>
-                  Discover exciting events.
-                </p>
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteEvent(event.id)}
+                >
+                  Delete
+                </button>
 
               </div>
 
-            </Link>
+            </div>
 
+          ))}
 
-            <Link to="/create-event">
+        </div>
+      )}
 
-              <div className="quick-card">
-
-                <span>
-                  
-                </span>
-
-                <h3>
-                  Create Event
-                </h3>
-
-                <p>
-                  Organize your own event.
-                </p>
-
-              </div>
-
-            </Link>
-
-          </div>
-
-        </section>
-
-      </main>
-
-    </>
-
+    </div>
   );
-
 }
 
 export default Dashboard;
