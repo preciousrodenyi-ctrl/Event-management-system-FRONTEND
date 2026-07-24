@@ -11,6 +11,7 @@ import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -18,12 +19,22 @@ function App() {
       <Navbar />
 
       <Routes>
+
         {/* Public Routes */}
+
         <Route path="/" element={<Home />} />
+
         <Route path="/login" element={<Login />} />
+
         <Route path="/signup" element={<Signup />} />
 
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
         {/* Protected Routes */}
+
         <Route
           path="/dashboard"
           element={
@@ -68,6 +79,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </>
   );

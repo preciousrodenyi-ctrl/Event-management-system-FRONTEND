@@ -54,6 +54,7 @@ function ForgotPassword() {
             Remember your password?
             <Link to="/login"> Login</Link>
           </p>
+          
 
         </form>
 
