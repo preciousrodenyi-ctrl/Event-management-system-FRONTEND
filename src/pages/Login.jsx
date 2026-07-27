@@ -28,17 +28,8 @@ function Login() {
     setLoading(true);
 
     try {
-      // Login
-      const response = await api.post("/login", formData);
+      await api.post("/login", formData);
 
-      console.log("Login successful:", response.data);
-
-      // Confirm that the session was saved
-      const sessionResponse = await api.get("/check_session");
-
-      console.log("Session confirmed:", sessionResponse.data);
-
-      // Go to dashboard
       navigate("/dashboard");
 
     } catch (error) {
@@ -49,7 +40,8 @@ function Login() {
 
       setError(
         error.response?.data?.error ||
-        "Login failed"
+        error.response?.data?.message ||
+        "Invalid username or password."
       );
 
     } finally {
@@ -59,21 +51,26 @@ function Login() {
 
   return (
     <div className="auth-page">
+
       <div className="auth-container">
+
         <form
           className="auth-card"
           onSubmit={handleSubmit}
         >
-          <h1>Welcome Back</h1>
+
+          <h1>
+            Welcome Back 
+          </h1>
 
           <p>
-            Login to continue to EventHub
+            Login to continue to EventHub.
           </p>
 
           {error && (
-            <p className="error">
+            <div className="error-message">
               {error}
-            </p>
+            </div>
           )}
 
           <label>
@@ -83,7 +80,7 @@ function Login() {
           <input
             type="text"
             name="username"
-            placeholder="Enter username"
+            placeholder="Enter your username"
             value={formData.username}
             onChange={handleChange}
             required
@@ -94,6 +91,7 @@ function Login() {
           </label>
 
           <div className="password-container">
+
             <input
               type={
                 showPassword
@@ -101,7 +99,7 @@ function Login() {
                   : "password"
               }
               name="password"
-              placeholder="Enter password"
+              placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
               required
@@ -117,13 +115,16 @@ function Login() {
                 ? "Hide"
                 : "Show"}
             </button>
+
           </div>
 
-          <p>
+          <div className="forgot-password">
+
             <Link to="/forgot-password">
               Forgot Password?
             </Link>
-          </p>
+
+          </div>
 
           <button
             type="submit"
@@ -135,15 +136,18 @@ function Login() {
               : "Login"}
           </button>
 
-          <p>
+          <p className="auth-footer">
             Don't have an account?
 
             <Link to="/signup">
-              {" "}Sign Up
+              {" "}Create an account
             </Link>
           </p>
+
         </form>
+
       </div>
+
     </div>
   );
 }

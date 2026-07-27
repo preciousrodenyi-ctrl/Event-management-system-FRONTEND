@@ -1,40 +1,45 @@
+import { useNavigate } from "react-router-dom";
 import heroImage from "../assets/hero.jpg";
 
+function Hero() {
+  const navigate = useNavigate();
 
-function Hero(){
+  return (
+    <section className="hero">
 
-return (
+      <div className="hero-text">
 
-<section className="hero">
+        <p className="hero-label">
+          EVENT MANAGEMENT MADE SIMPLE
+        </p>
 
-<div className="hero-text">
+        <h1>
+          Plan Your Events Easily
+        </h1>
 
-<h1>
-Plan Your Events Easily
-</h1>
+        <p>
+          Create, manage, and organize your events
+          all in one place.
+        </p>
 
-<p>
-Create, manage and organize your events in one place.
-</p>
+        <button
+          className="primary-btn"
+          onClick={() => navigate("/signup")}
+        >
+          Get Started →
+        </button>
 
-<button>
-Get Started
-</button>
+      </div>
 
-</div>
+      <div className="hero-image-container">
+        <img
+          src={heroImage}
+          alt="People enjoying an event"
+        />
+      </div>
 
-
-<img 
-src={heroImage}
-alt="events"
-/>
-
-
-</section>
-
-)
-
+    </section>
+  );
 }
-
 
 export default Hero;

@@ -13,6 +13,7 @@ function CreateEvent() {
     category: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   function handleChange(e) {
@@ -25,50 +26,71 @@ function CreateEvent() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    setLoading(true);
+    setError("");
+
     try {
       await api.post("/events", formData);
+
+      alert(" Event created successfully!");
+
       navigate("/events");
+
     } catch (err) {
-      console.log(err);
-      setError("Failed to create event.");
+      console.error(err);
+
+      setError(
+        err.response?.data?.error ||
+        "Failed to create event."
+      );
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div className="form-page">
+    <div className="create-event-page">
 
-      <form className="event-form" onSubmit={handleSubmit}>
+      <form
+        className="create-event-form"
+        onSubmit={handleSubmit}
+      >
 
         <h1>Create New Event</h1>
 
-        {error && <p className="error">{error}</p>}
+        {error && (
+          <p className="error">{error}</p>
+        )}
+
+        <label>Title</label>
 
         <input
           type="text"
           name="title"
-          placeholder="Event Title"
           value={formData.title}
           onChange={handleChange}
           required
         />
 
+        <label>Description</label>
+
         <textarea
           name="description"
-          placeholder="Description"
           rows="5"
           value={formData.description}
           onChange={handleChange}
-          required
         />
+
+        <label>Location</label>
 
         <input
           type="text"
           name="location"
-          placeholder="Location"
           value={formData.location}
           onChange={handleChange}
-          required
         />
+
+        <label>Date</label>
 
         <input
           type="date"
@@ -78,23 +100,29 @@ function CreateEvent() {
           required
         />
 
+        <label>Category</label>
+
         <select
           name="category"
           value={formData.category}
           onChange={handleChange}
-          required
         >
           <option value="">Select Category</option>
-          <option value="Technology">Technology</option>
-          <option value="Business">Business</option>
+          <option value="Conference">Conference</option>
+          <option value="Workshop">Workshop</option>
           <option value="Music">Music</option>
           <option value="Sports">Sports</option>
-          <option value="Art">Art</option>
+          <option value="Technology">Technology</option>
+          <option value="Networking">Networking</option>
           <option value="Education">Education</option>
         </select>
-
-        <button type="submit" className="primary-btn">
-          Create Event
+        
+        <button
+          type="submit"
+          className="primary-btn"
+          disabled={loading}
+        >
+          {loading ? "Creating..." : "Create Event"}
         </button>
 
       </form>

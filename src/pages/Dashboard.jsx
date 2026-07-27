@@ -5,7 +5,6 @@ import api from "../services/api";
 function Dashboard() {
   const [user, setUser] = useState(null);
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadDashboard();
@@ -13,170 +12,89 @@ function Dashboard() {
 
   async function loadDashboard() {
     try {
-      // Get logged-in user
-      const userResponse = await api.get(
-        "/check_session"
-      );
+      const userRes = await api.get("/check_session");
+      setUser(userRes.data);
 
-      setUser(userResponse.data);
-
-      // Get events
-      const eventsResponse = await api.get(
-        "/events/events"
-      );
-
-      setEvents(eventsResponse.data);
-
-    } catch (error) {
-      console.error(
-        "Dashboard error:",
-        error.response?.data ||
-        error.message
-      );
-
-    } finally {
-      setLoading(false);
+      const eventsRes = await api.get("/events");
+      setEvents(eventsRes.data);
+    } catch (err) {
+      console.error(err);
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="loading">
-        Loading dashboard...
-      </div>
-    );
   }
 
   return (
     <div className="dashboard">
 
-      <div className="dashboard-header">
+      <h1>
+        Welcome{user ? `, ${user.username}` : ""} 
+      </h1>
 
-        <div>
-          <h1>
-            Dashboard
-          </h1>
+      <p>
+        Manage your events from one place.
+      </p>
 
-          {user && (
-            <h2>
-              Welcome, {user.username} 👋
-            </h2>
-          )}
+      <div className="dashboard-cards">
 
-          <p>
-            Manage your events from one place.
-          </p>
+        <div className="dashboard-card">
+          <h2>{events.length}</h2>
+          <p>Total Events</p>
         </div>
 
-        <Link
-          to="/create-event"
-          className="primary-btn"
-        >
-          + Create Event
-        </Link>
-
-      </div>
-
-      <div className="dashboard-stats">
-
-        <div className="stat-card">
-          <h3>
-            {events.length}
-          </h3>
-
-          <p>
-            Total Events
-          </p>
-        </div>
-
-        <div className="stat-card">
-          <h3>
-            EventHub
-          </h3>
-
-          <p>
-            Your Event Platform
-          </p>
-        </div>
-
-      </div>
-
-      <section className="dashboard-events">
-
-        <div className="section-header">
-
-          <h2>
-            Your Events
-          </h2>
-
-          <Link to="/events">
-            View All
+        <div className="dashboard-card">
+          <Link
+            to="/create-event"
+            className="dashboard-btn"
+          >
+            + Create Event
           </Link>
-
         </div>
+
+        <div className="dashboard-card">
+          <Link
+            to="/events"
+            className="dashboard-btn"
+          >
+            View Events
+          </Link>
+        </div>
+
+      </div>
+
+      <h2 className="recent-title">
+        Recent Events
+      </h2>
+
+      <div className="dashboard-events">
 
         {events.length === 0 ? (
 
-          <div className="empty-state">
-
-            <h3>
-              No events yet
-            </h3>
-
-            <p>
-              Create your first event to get started.
-            </p>
-
-            <Link
-              to="/create-event"
-              className="primary-btn"
-            >
-              Create Your First Event
-            </Link>
-
-          </div>
+          <p>No events available.</p>
 
         ) : (
 
-          <div className="event-grid">
+          events.slice(0, 3).map((event) => (
 
-            {events.slice(0, 3).map((event) => (
+            <div
+              className="dashboard-event"
+              key={event.id}
+            >
 
-              <div
-                className="event-card"
-                key={event.id}
-              >
+              <h3>{event.title}</h3>
 
-                <h3>
-                  {event.title}
-                </h3>
+              <p>{event.location}</p>
 
-                <p>
-                  {event.description}
-                </p>
+              <p>{event.date}</p>
 
-                <p>
-                  📍 {event.location}
-                </p>
+            </div>
 
-                <Link
-                  to={`/events/${event.id}`}
-                >
-                  View Details
-                </Link>
-
-              </div>
-
-            ))}
-
-          </div>
+          ))
 
         )}
 
-      </section>
+      </div>
 
     </div>
   );
 }
 
-export default Dashboard;;
+export default Dashboard;

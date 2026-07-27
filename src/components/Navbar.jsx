@@ -16,12 +16,14 @@ function Navbar() {
     try {
       const response = await api.get("/check_session");
 
-      // Backend returns the user directly
-      setUser(response.data);
+      // Supports both:
+      // { user: {...} }
+      // and directly returned user data
+      const loggedInUser = response.data.user || response.data;
 
+      setUser(loggedInUser);
     } catch (error) {
       setUser(null);
-
     } finally {
       setLoading(false);
     }
@@ -29,10 +31,9 @@ function Navbar() {
 
   async function handleLogout() {
     try {
-      await api.delete("/logout");
+      await api.post("/logout");
 
       setUser(null);
-
       navigate("/login");
 
     } catch (error) {
@@ -45,10 +46,8 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link
-        to="/"
-        className="logo"
-      >
+
+      <Link to="/" className="logo">
         EventHub
       </Link>
 
@@ -64,7 +63,7 @@ function Navbar() {
               Login
             </Link>
 
-            <Link to="/signup">
+            <Link to="/signup" className="signup-link">
               Sign Up
             </Link>
           </>
@@ -84,6 +83,10 @@ function Navbar() {
               Add Event
             </Link>
 
+            <span className="welcome-user">
+              Hi, {user.username}
+            </span>
+
             <button
               onClick={handleLogout}
               className="logout-btn"
@@ -94,6 +97,7 @@ function Navbar() {
         )}
 
       </div>
+
     </nav>
   );
 }

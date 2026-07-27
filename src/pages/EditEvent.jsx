@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import api from "../services/api";
 
 function EditEvent() {
@@ -11,6 +11,7 @@ function EditEvent() {
     description: "",
     location: "",
     date: "",
+    category: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -18,41 +19,34 @@ function EditEvent() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchEvent();
+    loadEvent();
   }, [id]);
 
-  async function fetchEvent() {
+  async function loadEvent() {
     try {
-      const response = await api.get(
-        "/events/events"
-      );
+      const response = await api.get(`/events/${id}`);
 
-      const selectedEvent =
-        response.data.events.find(
-          (event) =>
-            event.id === Number(id)
-        );
-
-      if (!selectedEvent) {
-        setError("Event not found.");
-        return;
-      }
+      const event =
+        response.data.event || response.data;
 
       setFormData({
-        title: selectedEvent.title || "",
-        description: selectedEvent.description || "",
-        location: selectedEvent.location || "",
-        date: selectedEvent.date || "",
+        title: event.title || "",
+        description: event.description || "",
+        location: event.location || "",
+        date: event.date || "",
+        category: event.category || "",
       });
 
     } catch (err) {
       console.error(
-        "Unable to load event:",
-        err.response?.data ||
-        err.message
+        "Load event error:",
+        err.response?.data || err.message
       );
 
-      setError("Unable to load event.");
+      setError(
+        err.response?.data?.error ||
+        "Failed to load event."
+      );
 
     } finally {
       setLoading(false);
@@ -69,26 +63,26 @@ function EditEvent() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    setError("");
     setSaving(true);
+    setError("");
 
     try {
       await api.patch(
-        `/events/events/${id}`,
+        `/events/${id}`,
         formData
       );
 
-      navigate("/events");
+      navigate(`/events/${id}`);
 
     } catch (err) {
       console.error(
-        "Update error:",
-        err.response?.data ||
-        err.message
+        "Update event error:",
+        err.response?.data || err.message
       );
 
       setError(
         err.response?.data?.error ||
+        err.response?.data?.message ||
         "Failed to update event."
       );
 
@@ -99,16 +93,22 @@ function EditEvent() {
 
   if (loading) {
     return (
-      <div className="loading">
-        <h2>
-          Loading Event...
-        </h2>
+      <div className="loading-page">
+        <div className="loading-spinner"></div>
+        <p>Loading event...</p>
       </div>
     );
   }
 
   return (
     <div className="form-page">
+
+      <Link
+        to={`/events/${id}`}
+        className="back-link"
+      >
+        ← Back to Event
+      </Link>
 
       <form
         className="event-form"
@@ -119,10 +119,14 @@ function EditEvent() {
           Edit Event
         </h1>
 
+        <p>
+          Update your event information below.
+        </p>
+
         {error && (
-          <p className="error">
+          <div className="error-message">
             {error}
-          </p>
+          </div>
         )}
 
         <label>
@@ -132,7 +136,6 @@ function EditEvent() {
         <input
           type="text"
           name="title"
-          placeholder="Event Title"
           value={formData.title}
           onChange={handleChange}
           required
@@ -145,7 +148,6 @@ function EditEvent() {
         <textarea
           name="description"
           rows="5"
-          placeholder="Description"
           value={formData.description}
           onChange={handleChange}
           required
@@ -158,11 +160,49 @@ function EditEvent() {
         <input
           type="text"
           name="location"
-          placeholder="Location"
           value={formData.location}
           onChange={handleChange}
           required
         />
+
+        <label>
+          Category
+        </label>
+
+        <select
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+        >
+          <option value="">
+            Select a category
+          </option>
+
+          <option value="Technology">
+            Technology
+          </option>
+
+          <option value="Music">
+            Music
+          </option>
+
+          <option value="Business">
+            Business
+          </option>
+
+          <option value="Sports">
+            Sports
+          </option>
+
+          <option value="Education">
+            Education
+          </option>
+
+          <option value="Social">
+            Social
+          </option>
+        </select>
 
         <label>
           Date
@@ -176,15 +216,26 @@ function EditEvent() {
           required
         />
 
-        <button
-          type="submit"
-          className="primary-btn"
-          disabled={saving}
-        >
-          {saving
-            ? "Updating Event..."
-            : "Update Event"}
-        </button>
+        <div className="form-actions">
+
+          <Link
+            to={`/events/${id}`}
+            className="cancel-button"
+          >
+            Cancel
+          </Link>
+
+          <button
+            type="submit"
+            className="primary-btn"
+            disabled={saving}
+          >
+            {saving
+              ? "Saving Changes..."
+              : "Save Changes"}
+          </button>
+
+        </div>
 
       </form>
 

@@ -2,65 +2,65 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function ForgotPassword() {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+const [email, setEmail] = useState("");
+const [message, setMessage] = useState("");
 
-  function handleSubmit(e) {
-    e.preventDefault();
+function handleSubmit(e) {
+e.preventDefault();
 
-    setMessage(
-      "If an account exists with this email, password reset instructions will be sent."
-    );
-  }
+setMessage(
+  "If an account exists with this email, password reset instructions will be sent."
+);
 
-  return (
-    <div className="auth-page">
-      <div className="auth-container">
+}
 
-        <form onSubmit={handleSubmit} className="auth-card">
+return (
+<div className="auth-page">
+<div className="auth-container">
+<form className="auth-card" onSubmit={handleSubmit} >
+<h1>Forgot Password?</h1>
 
-          <h1>Forgot Password?</h1>
+      <p>
+        Enter your email address and we will help you reset your password.
+      </p>
 
-          <p>Enter your email to reset your password.</p>
+      {message && (
+        <div className="success-message">
+          {message}
+        </div>
+      )}
 
-          {message && (
-            <p className="success">
-              {message}
-            </p>
-          )}
+      <label>
+        Email Address
+      </label>
 
-          <div className="auth-form">
+      <input
+        type="email"
+        placeholder="Enter your email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
 
-            <label>Email Address</label>
+      <button
+        type="submit"
+        className="auth-btn"
+      >
+        Send Reset Instructions
+      </button>
 
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+      <p className="auth-footer">
+        Remember your password?
 
-            <button
-              type="submit"
-              className="auth-btn"
-            >
-              Reset Password
-            </button>
+        <Link to="/login">
+          {" "}Back to Login
+        </Link>
+      </p>
+    </form>
+  </div>
+</div>
 
-          </div>
-
-          <p className="auth-footer">
-            Remember your password?
-            <Link to="/login"> Login</Link>
-          </p>
-          
-
-        </form>
-
-      </div>
-    </div>
-  );
+);
 }
 
 export default ForgotPassword;

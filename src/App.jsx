@@ -26,7 +26,7 @@ function App() {
 
       <Routes>
 
-        {/* Public routes */}
+        {/* PUBLIC ROUTES */}
 
         <Route
           path="/"
@@ -48,7 +48,7 @@ function App() {
           element={<ForgotPassword />}
         />
 
-        {/* Protected routes */}
+        {/* PROTECTED ROUTES */}
 
         <Route
           path="/dashboard"
@@ -86,8 +86,10 @@ function App() {
           }
         />
 
+        {/* EDIT EVENT */}
+
         <Route
-          path="/edit-event/:id"
+          path="/events/:id/edit"
           element={
             <ProtectedRoute>
               <EditEvent />
@@ -95,7 +97,7 @@ function App() {
           }
         />
 
-        {/* 404 route */}
+        {/* 404 */}
 
         <Route
           path="*"

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 
 function EventDetails() {
@@ -8,92 +8,157 @@ function EventDetails() {
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchEvent();
-  }, []);
+    loadEvent();
+  }, [id]);
 
-  async function fetchEvent() {
+  async function loadEvent() {
     try {
       const response = await api.get(`/events/${id}`);
-      setEvent(response.data.event);
-    } catch (error) {
-      console.log(error);
-      navigate("/events");
+
+      setEvent(response.data.event || response.data);
+    } catch (err) {
+      console.error(
+        "Event details error:",
+        err.response?.data || err.message
+      );
+
+      setError(
+        err.response?.data?.error ||
+        "Failed to load event."
+      );
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDelete() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this event?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await api.delete(`/events/${id}`);
+
+      navigate("/events");
+    } catch (err) {
+      console.error(
+        "Delete event error:",
+        err.response?.data || err.message
+      );
+
+      setError(
+        err.response?.data?.error ||
+        "Failed to delete event."
+      );
     }
   }
 
   if (loading) {
     return (
       <div className="loading">
-        <h2>Loading Event...</h2>
+        Loading event...
       </div>
     );
   }
 
-  if (!event) {
+  if (error || !event) {
     return (
-      <div className="loading">
-        <h2>Event not found.</h2>
+      <div className="event-not-found">
+        <h1>Event Not Found</h1>
+
+        <p>
+          {error || "This event does not exist."}
+        </p>
+
+        <Link
+          to="/events"
+          className="primary-btn"
+        >
+          Back to Events
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="details-page">
+    <div className="event-details-page">
 
-      <div className="details-card">
+      <Link
+        to="/events"
+        className="back-link"
+      >
+        ← Back to Events
+      </Link>
 
-        <div className="details-image">
-          <img
-            src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200"
-            alt={event.title}
-          />
+      <div className="event-details-card">
+
+        <div className="event-details-banner">
+          
         </div>
 
-        <div className="details-content">
+        <div className="event-details-content">
 
-          <span className="category-badge">
-            {event.category}
+          <span className="event-category">
+            {event.category || "Event"}
           </span>
 
-          <h1>{event.title}</h1>
+          <h1>
+            {event.title}
+          </h1>
 
-          <p className="description">
-            {event.description}
-          </p>
+          <div className="event-details-info">
 
-          <div className="details-info">
+            <div>
+              <strong> Location</strong>
+              <p>{event.location}</p>
+            </div>
+
+            <div>
+              <strong>Date</strong>
+              <p>{event.date}</p>
+            </div>
+
+          </div>
+
+          <div className="event-description">
+
+            <h2>
+              About This Event
+            </h2>
 
             <p>
-              📍 <strong>Location:</strong> {event.location}
-            </p>
-
-            <p>
-              📅 <strong>Date:</strong> {event.date}
-            </p>
-
-            <p>
-              🆔 <strong>Event ID:</strong> {event.id}
+              {event.description}
             </p>
 
           </div>
 
-          <div className="details-buttons">
+          {error && (
+            <p className="error">
+              {error}
+            </p>
+          )}
 
-            <Link to={`/events/${event.id}/edit`}>
-              <button className="edit-btn">
-                Edit Event
-              </button>
+          <div className="event-actions">
+
+            <Link
+              to={`/edit-event/${event.id}`}
+              className="edit-button"
+            >
+              Edit Event
             </Link>
 
             <button
-              className="view-btn"
-              onClick={() => navigate("/events")}
+              onClick={handleDelete}
+              className="delete-button"
             >
-              Back to Events
+              Delete Event
             </button>
 
           </div>

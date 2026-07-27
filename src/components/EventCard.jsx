@@ -2,18 +2,16 @@ import { Link } from "react-router-dom";
 
 function EventCard({ event }) {
   return (
-    <div className="event-card">
+    <article className="event-card">
 
-      <img
-        src={event.image}
-        alt={event.title}
-        className="event-card-image"
-      />
+      <div className="event-card-image">
+        
+      </div>
 
       <div className="event-card-content">
 
         <span className="event-category">
-          {event.category}
+          {event.category || "Event"}
         </span>
 
         <h2>
@@ -21,22 +19,27 @@ function EventCard({ event }) {
         </h2>
 
         <p>
+          {event.description}
+        </p>
+
+        <div className="event-info">
            {event.location}
-        </p>
+        </div>
 
-        <p>
+        <div className="event-info">
            {event.date}
-        </p>
+        </div>
 
-        <Link to={`/events/${event.id}`}>
-          <button className="view-event-btn">
-            View Details
-          </button>
+        <Link
+          to={`/events/${event.id}`}
+          className="view-event-btn"
+        >
+          View Details →
         </Link>
 
       </div>
 
-    </div>
+    </article>
   );
 }
 
