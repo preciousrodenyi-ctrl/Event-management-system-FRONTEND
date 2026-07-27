@@ -11,22 +11,49 @@ function EditEvent() {
     description: "",
     location: "",
     date: "",
-    category: "",
   });
 
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchEvent();
-  }, []);
+  }, [id]);
 
   async function fetchEvent() {
     try {
-      const response = await api.get(`/events/${id}`);
-      setFormData(response.data.event);
+      const response = await api.get(
+        "/events/events"
+      );
+
+      const selectedEvent =
+        response.data.events.find(
+          (event) =>
+            event.id === Number(id)
+        );
+
+      if (!selectedEvent) {
+        setError("Event not found.");
+        return;
+      }
+
+      setFormData({
+        title: selectedEvent.title || "",
+        description: selectedEvent.description || "",
+        location: selectedEvent.location || "",
+        date: selectedEvent.date || "",
+      });
+
     } catch (err) {
+      console.error(
+        "Unable to load event:",
+        err.response?.data ||
+        err.message
+      );
+
       setError("Unable to load event.");
+
     } finally {
       setLoading(false);
     }
@@ -42,18 +69,40 @@ function EditEvent() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    setError("");
+    setSaving(true);
+
     try {
-      await api.patch(`/events/${id}`, formData);
+      await api.patch(
+        `/events/events/${id}`,
+        formData
+      );
+
       navigate("/events");
+
     } catch (err) {
-      setError("Failed to update event.");
+      console.error(
+        "Update error:",
+        err.response?.data ||
+        err.message
+      );
+
+      setError(
+        err.response?.data?.error ||
+        "Failed to update event."
+      );
+
+    } finally {
+      setSaving(false);
     }
   }
 
   if (loading) {
     return (
       <div className="loading">
-        <h2>Loading Event...</h2>
+        <h2>
+          Loading Event...
+        </h2>
       </div>
     );
   }
@@ -61,11 +110,24 @@ function EditEvent() {
   return (
     <div className="form-page">
 
-      <form className="event-form" onSubmit={handleSubmit}>
+      <form
+        className="event-form"
+        onSubmit={handleSubmit}
+      >
 
-        <h1>Edit Event</h1>
+        <h1>
+          Edit Event
+        </h1>
 
-        {error && <p className="error">{error}</p>}
+        {error && (
+          <p className="error">
+            {error}
+          </p>
+        )}
+
+        <label>
+          Event Title
+        </label>
 
         <input
           type="text"
@@ -76,6 +138,10 @@ function EditEvent() {
           required
         />
 
+        <label>
+          Description
+        </label>
+
         <textarea
           name="description"
           rows="5"
@@ -84,6 +150,10 @@ function EditEvent() {
           onChange={handleChange}
           required
         />
+
+        <label>
+          Location
+        </label>
 
         <input
           type="text"
@@ -94,6 +164,10 @@ function EditEvent() {
           required
         />
 
+        <label>
+          Date
+        </label>
+
         <input
           type="date"
           name="date"
@@ -102,23 +176,14 @@ function EditEvent() {
           required
         />
 
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          required
+        <button
+          type="submit"
+          className="primary-btn"
+          disabled={saving}
         >
-          <option value="">Select Category</option>
-          <option value="Technology">Technology</option>
-          <option value="Business">Business</option>
-          <option value="Music">Music</option>
-          <option value="Sports">Sports</option>
-          <option value="Art">Art</option>
-          <option value="Education">Education</option>
-        </select>
-
-        <button type="submit" className="primary-btn">
-          Update Event
+          {saving
+            ? "Updating Event..."
+            : "Update Event"}
         </button>
 
       </form>

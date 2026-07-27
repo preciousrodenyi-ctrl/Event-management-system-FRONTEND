@@ -1,255 +1,135 @@
 import { useState } from "react";
-
-import {
-  Link,
-  useNavigate
-} from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 
-
-function Login() {
-
+function Signup() {
   const navigate = useNavigate();
 
-
   const [formData, setFormData] = useState({
-
     username: "",
-
-    password: ""
-
+    password: "",
   });
 
-
-  const [showPassword, setShowPassword] =
-    useState(false);
-
-
-  const [error, setError] =
-    useState("");
-
-
-  const [loading, setLoading] =
-    useState(false);
-
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleChange(e) {
-
     setFormData({
-
       ...formData,
-
-      [e.target.name]:
-        e.target.value
-
+      [e.target.name]: e.target.value,
     });
-
   }
 
-
   async function handleSubmit(e) {
-
     e.preventDefault();
 
     setError("");
-
     setLoading(true);
 
-
     try {
-
       const response = await api.post(
-        "/login",
+        "/signup",
         formData
       );
 
-
       console.log(
-        "Login successful:",
+        "Signup successful:",
         response.data
       );
 
-
-      navigate("/dashboard");
-
+      navigate("/login");
 
     } catch (error) {
-
       console.error(
-        error.response?.data
+        "Signup error:",
+        error.response?.data ||
+        error.message
       );
-
 
       setError(
-
         error.response?.data?.error ||
-
-        "Login failed"
-
+        "Signup failed"
       );
 
-
     } finally {
-
       setLoading(false);
-
     }
-
   }
 
-
   return (
-
     <div className="auth-page">
+      <div className="auth-card">
+        <h1>Create Account</h1>
 
-      <div className="auth-container">
+        <p>
+          Join EventHub today
+        </p>
 
-        <form
-          className="auth-card"
-          onSubmit={handleSubmit}
-        >
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
 
-          <h1>
-            Welcome Back
-          </h1>
-
-
-          <p>
-            Login to continue to EventHub
-          </p>
-
-
-          {error && (
-
-            <p className="error">
-              {error}
-            </p>
-
-          )}
-
-
-          <label>
-            Username
-          </label>
-
-
+        <form onSubmit={handleSubmit}>
           <input
-
             type="text"
-
             name="username"
-
-            placeholder="Enter username"
-
-            value={
-              formData.username
-            }
-
+            placeholder="Username"
+            value={formData.username}
             onChange={handleChange}
-
             required
-
           />
 
-
-          <label>
-            Password
-          </label>
-
-
           <div className="password-container">
-
             <input
-
               type={
                 showPassword
                   ? "text"
                   : "password"
               }
-
               name="password"
-
-              placeholder="Enter password"
-
-              value={
-                formData.password
-              }
-
+              placeholder="Password"
+              value={formData.password}
               onChange={handleChange}
-
               required
-
             />
 
-
             <button
-
               type="button"
-
               onClick={() =>
                 setShowPassword(
                   !showPassword
                 )
               }
-
             >
-
               {showPassword
                 ? "Hide"
                 : "Show"}
-
             </button>
-
           </div>
-
-
-          <p>
-
-            <Link to="/forgot-password">
-
-              Forgot Password?
-
-            </Link>
-
-          </p>
-
 
           <button
             type="submit"
-            className="auth-btn"
             disabled={loading}
           >
-
             {loading
-              ? "Logging in..."
-              : "Login"}
-
+              ? "Creating account..."
+              : "Sign Up"}
           </button>
-
-
-          <p>
-
-            Don't have an account?
-
-            <Link to="/signup">
-
-              {" "}Sign Up
-
-            </Link>
-
-          </p>
-
-
         </form>
 
+        <p>
+          Already have an account?{" "}
+
+          <Link to="/login">
+            Login
+          </Link>
+        </p>
       </div>
-
     </div>
-
   );
-
 }
 
-
-export default Login;
+export default Signup;

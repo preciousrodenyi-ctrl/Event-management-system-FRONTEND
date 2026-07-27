@@ -1,130 +1,145 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
-function Events() {
-  const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+function CreateEvent() {
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    location: "",
+    date: "",
+  });
 
-  async function fetchEvents() {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(e) {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    setError("");
+    setLoading(true);
+
     try {
-      const response = await api.get("/events");
-      setEvents(response.data.events);
-      setFilteredEvents(response.data.events);
-    } catch (error) {
-      console.log(error);
+      await api.post(
+        "/events/events",
+        formData
+      );
+
+      navigate("/events");
+
+    } catch (err) {
+      console.error(
+        "Create event error:",
+        err.response?.data ||
+        err.message
+      );
+
+      setError(
+        err.response?.data?.error ||
+        "Failed to create event."
+      );
+
     } finally {
       setLoading(false);
     }
   }
 
-  function handleSearch(e) {
-    const value = e.target.value;
-    setSearch(value);
-
-    const filtered = events.filter((event) =>
-      event.title.toLowerCase().includes(value.toLowerCase())
-    );
-
-    setFilteredEvents(filtered);
-  }
-
-  async function handleDelete(id) {
-    if (!window.confirm("Delete this event?")) return;
-
-    try {
-      await api.delete(`/events/${id}`);
-
-      const updated = events.filter((event) => event.id !== id);
-      setEvents(updated);
-      setFilteredEvents(updated);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  if (loading) {
-    return <h2 className="loading">Loading Events...</h2>;
-  }
-
   return (
-    <div className="events-page">
+    <div className="form-page">
 
-      <div className="events-header">
-        <h1>All Events</h1>
+      <form
+        className="event-form"
+        onSubmit={handleSubmit}
+      >
 
-        <Link to="/create-event">
-          <button className="add-btn">+ New Event</button>
-        </Link>
-      </div>
+        <h1>
+          Create New Event
+        </h1>
 
-      <input
-        className="search-bar"
-        type="text"
-        placeholder="Search events..."
-        value={search}
-        onChange={handleSearch}
-      />
+        <p>
+          Add the details of your upcoming event.
+        </p>
 
-      {filteredEvents.length === 0 ? (
-        <h3>No events found.</h3>
-      ) : (
-        <div className="events-grid">
+        {error && (
+          <p className="error">
+            {error}
+          </p>
+        )}
 
-          {filteredEvents.map((event) => (
+        <label>
+          Event Title
+        </label>
 
-            <div className="event-card" key={event.id}>
+        <input
+          type="text"
+          name="title"
+          placeholder="e.g. Tech Conference 2026"
+          value={formData.title}
+          onChange={handleChange}
+          required
+        />
 
-              <h2>{event.title}</h2>
+        <label>
+          Description
+        </label>
 
-              <p>
-                <strong>Category:</strong> {event.category}
-              </p>
+        <textarea
+          name="description"
+          placeholder="Describe your event..."
+          rows="5"
+          value={formData.description}
+          onChange={handleChange}
+          required
+        />
 
-              <p>
-                <strong>Date:</strong> {event.date}
-              </p>
+        <label>
+          Location
+        </label>
 
-              <p>
-                <strong>Location:</strong> {event.location}
-              </p>
+        <input
+          type="text"
+          name="location"
+          placeholder="e.g. Nairobi, Kenya"
+          value={formData.location}
+          onChange={handleChange}
+          required
+        />
 
-              <p>{event.description}</p>
+        <label>
+          Date
+        </label>
 
-              <div className="event-buttons">
+        <input
+          type="date"
+          name="date"
+          value={formData.date}
+          onChange={handleChange}
+          required
+        />
 
-                <Link to={`/events/${event.id}`}>
-                  <button className="view-btn">View</button>
-                </Link>
+        <button
+          type="submit"
+          className="primary-btn"
+          disabled={loading}
+        >
+          {loading
+            ? "Creating Event..."
+            : "Create Event"}
+        </button>
 
-                <Link to={`/events/${event.id}/edit`}>
-                  <button className="edit-btn">Edit</button>
-                </Link>
-
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(event.id)}
-                >
-                  Delete
-                </button>
-
-              </div>
-
-            </div>
-
-          ))}
-
-        </div>
-      )}
+      </form>
 
     </div>
   );
 }
 
-export default Events;
+export default CreateEvent;
