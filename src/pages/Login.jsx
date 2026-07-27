@@ -1,110 +1,255 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+
+import {
+  Link,
+  useNavigate
+} from "react-router-dom";
+
 import api from "../services/api";
 
+
 function Login() {
-const navigate = useNavigate();
 
-const [formData, setFormData] = useState({
-username: "",
-password: "",
-});
+  const navigate = useNavigate();
 
-const [showPassword, setShowPassword] = useState(false);
-const [error, setError] = useState("");
 
-function handleChange(e) {
-setFormData({
-...formData,
-[e.target.name]: e.target.value,
-});
-}
+  const [formData, setFormData] = useState({
 
-async function handleSubmit(e) {
-e.preventDefault();
-setError("");
+    username: "",
 
-try {
-  await api.post("/login", formData);
+    password: ""
 
-  navigate("/dashboard");
+  });
 
-  window.location.reload();
-} catch (err) {
-  setError("Invalid username or password.");
-}
 
-}
+  const [showPassword, setShowPassword] =
+    useState(false);
 
-return (
-<div className="auth-page">
-<div className="auth-container">
-<form onSubmit={handleSubmit} className="auth-card">
 
-      <h1>Welcome Back</h1>
+  const [error, setError] =
+    useState("");
 
-      <p>Login to continue to EventHub</p>
 
-      {error && <p className="error">{error}</p>}
+  const [loading, setLoading] =
+    useState(false);
 
-      <div className="auth-form">
 
-        <label>Username</label>
+  function handleChange(e) {
 
-        <input
-          type="text"
-          name="username"
-          placeholder="Enter your username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        />
+    setFormData({
 
-        <label>Password</label>
+      ...formData,
 
-        <div className="password-container">
+      [e.target.name]:
+        e.target.value
+
+    });
+
+  }
+
+
+  async function handleSubmit(e) {
+
+    e.preventDefault();
+
+    setError("");
+
+    setLoading(true);
+
+
+    try {
+
+      const response = await api.post(
+        "/login",
+        formData
+      );
+
+
+      console.log(
+        "Login successful:",
+        response.data
+      );
+
+
+      navigate("/dashboard");
+
+
+    } catch (error) {
+
+      console.error(
+        error.response?.data
+      );
+
+
+      setError(
+
+        error.response?.data?.error ||
+
+        "Login failed"
+
+      );
+
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  }
+
+
+  return (
+
+    <div className="auth-page">
+
+      <div className="auth-container">
+
+        <form
+          className="auth-card"
+          onSubmit={handleSubmit}
+        >
+
+          <h1>
+            Welcome Back
+          </h1>
+
+
+          <p>
+            Login to continue to EventHub
+          </p>
+
+
+          {error && (
+
+            <p className="error">
+              {error}
+            </p>
+
+          )}
+
+
+          <label>
+            Username
+          </label>
+
 
           <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
+
+            type="text"
+
+            name="username"
+
+            placeholder="Enter username"
+
+            value={
+              formData.username
+            }
+
             onChange={handleChange}
+
             required
+
           />
 
+
+          <label>
+            Password
+          </label>
+
+
+          <div className="password-container">
+
+            <input
+
+              type={
+                showPassword
+                  ? "text"
+                  : "password"
+              }
+
+              name="password"
+
+              placeholder="Enter password"
+
+              value={
+                formData.password
+              }
+
+              onChange={handleChange}
+
+              required
+
+            />
+
+
+            <button
+
+              type="button"
+
+              onClick={() =>
+                setShowPassword(
+                  !showPassword
+                )
+              }
+
+            >
+
+              {showPassword
+                ? "Hide"
+                : "Show"}
+
+            </button>
+
+          </div>
+
+
+          <p>
+
+            <Link to="/forgot-password">
+
+              Forgot Password?
+
+            </Link>
+
+          </p>
+
+
           <button
-            type="button"
-            className="password-toggle"
-            onClick={() => setShowPassword(!showPassword)}
+            type="submit"
+            className="auth-btn"
+            disabled={loading}
           >
-            {showPassword ? "Hide" : "Show"}
+
+            {loading
+              ? "Logging in..."
+              : "Login"}
+
           </button>
 
-        </div>
 
-        <p className="forgot-password">
-          <Link to="/forgot-password">
-            Forgot Password?
-          </Link>
-        </p>
+          <p>
 
-        <button type="submit" className="auth-btn">
-          Login
-        </button>
+            Don't have an account?
+
+            <Link to="/signup">
+
+              {" "}Sign Up
+
+            </Link>
+
+          </p>
+
+
+        </form>
 
       </div>
 
-      <p className="auth-footer">
-        Don't have an account?
-        <Link to="/signup"> Sign Up</Link>
-      </p>
+    </div>
 
-    </form>
-  </div>
-</div>
+  );
 
-);
 }
+
 
 export default Login;
