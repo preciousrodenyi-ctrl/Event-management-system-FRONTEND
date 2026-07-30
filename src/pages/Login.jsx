@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 function Login() {
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -15,32 +16,49 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
 
+
   function handleChange(e) {
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
   }
 
 
+
   async function handleSubmit(e) {
+
     e.preventDefault();
 
     setError("");
     setLoading(true);
 
+
     try {
+
       const response = await api.post(
         "/login",
-        formData,
-        {
-          withCredentials: true,
-        }
+        formData
       );
 
-      console.log("Login successful:", response.data);
+
+      // Save logged in user
+      localStorage.setItem(
+        "user",
+        JSON.stringify(response.data.user)
+      );
+
+
+      console.log(
+        "Login successful:",
+        response.data
+      );
+
 
       navigate("/dashboard");
+
 
     } catch (error) {
 
@@ -49,23 +67,30 @@ function Login() {
         error.response?.data || error.message
       );
 
+
       setError(
         error.response?.data?.error ||
-        "Invalid username or password."
+        "Invalid username or password"
       );
 
+
     } finally {
+
       setLoading(false);
+
     }
+
   }
 
 
+
   return (
+
     <div className="auth-page">
 
       <div className="auth-container">
 
-        <form 
+        <form
           className="auth-card"
           onSubmit={handleSubmit}
         >
@@ -74,30 +99,44 @@ function Login() {
             Welcome Back
           </h1>
 
+
           <p>
             Login to continue to EventHub.
           </p>
 
 
+
           {error && (
+
             <div className="error-message">
               {error}
             </div>
+
           )}
+
 
 
           <label>
             Username
           </label>
 
+
           <input
+
             type="text"
+
             name="username"
+
             placeholder="Enter your username"
+
             value={formData.username}
+
             onChange={handleChange}
+
             required
+
           />
+
 
 
           <label>
@@ -105,62 +144,104 @@ function Login() {
           </label>
 
 
+
           <div className="password-container">
 
+
             <input
-              type={showPassword ? "text" : "password"}
+
+              type={
+                showPassword
+                ? "text"
+                : "password"
+              }
+
               name="password"
+
               placeholder="Enter your password"
+
               value={formData.password}
+
               onChange={handleChange}
+
               required
+
             />
 
 
+
             <button
+
               type="button"
+
               onClick={() =>
                 setShowPassword(!showPassword)
               }
+
             >
-              {showPassword ? "Hide" : "Show"}
+
+              {
+                showPassword
+                ? "Hide"
+                : "Show"
+              }
+
             </button>
 
+
           </div>
 
 
-          <div className="forgot-password">
-            <Link to="/forgot-password">
-              Forgot Password?
-            </Link>
-          </div>
 
 
           <button
+
             type="submit"
+
             className="auth-btn"
+
             disabled={loading}
+
           >
-            {loading ? "Logging in..." : "Login"}
+
+            {
+              loading
+              ? "Logging in..."
+              : "Login"
+            }
+
           </button>
 
 
+
+
           <p className="auth-footer">
+
             Don't have an account?
 
+
             <Link to="/signup">
+
               {" "}Create an account
+
             </Link>
+
 
           </p>
 
 
+
         </form>
+
 
       </div>
 
+
     </div>
+
   );
+
 }
+
 
 export default Login;
