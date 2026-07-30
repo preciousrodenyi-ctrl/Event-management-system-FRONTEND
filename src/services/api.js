@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5555/api",
+  baseURL: "https://event-management-system-backend-tjsl.onrender.com/api",
   withCredentials: true,
 });
 
