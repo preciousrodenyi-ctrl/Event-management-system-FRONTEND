@@ -1,54 +1,50 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
 function ProtectedRoute({ children }) {
-  const location = useLocation();
 
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(null);
+
 
   useEffect(() => {
+
     async function checkSession() {
+
       try {
-        await api.get("/check_session");
+
+        await api.get("/check_session", {
+          withCredentials: true,
+        });
 
         setAuthenticated(true);
+
       } catch (error) {
+
         console.error(
           "Authentication check failed:",
-          error.response?.data || error.message
+          error.response?.data
         );
 
         setAuthenticated(false);
-      } finally {
-        setLoading(false);
       }
     }
 
+
     checkSession();
+
   }, []);
 
-  if (loading) {
-    return (
-      <div className="protected-loading">
-        <div className="loading-spinner"></div>
-        <p>Checking your session...</p>
-      </div>
-    );
+
+  if (authenticated === null) {
+    return <h2>Loading...</h2>;
   }
 
-  if (!authenticated) {
-    return (
-      <Navigate
-        to="/login"
-        state={{ from: location }}
-        replace
-      />
-    );
-  }
 
-  return children;
+  return authenticated 
+    ? children 
+    : <Navigate to="/login" />;
 }
+
 
 export default ProtectedRoute;
