@@ -1,37 +1,53 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
-import { FaMapMarkerAlt, FaCalendar } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaArrowRight
+} from "react-icons/fa";
 
 
 function Events() {
 
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  const [events,setEvents] = useState([]);
+
+  const [loading,setLoading] = useState(true);
 
 
 
-  useEffect(() => {
+
+  useEffect(()=>{
 
     fetchEvents();
 
-  }, []);
+  },[]);
+
+
 
 
 
   async function fetchEvents(){
 
-    try {
+    try{
 
-      const response = await api.get("/events");
+
+      const response = await api.get(
+        "/events"
+      );
+
 
       setEvents(response.data);
 
-    } catch(error){
+
+
+    }catch(error){
 
       console.log(error);
 
-    } finally {
+
+    }finally{
 
       setLoading(false);
 
@@ -41,16 +57,18 @@ function Events() {
 
 
 
+
+
   if(loading){
 
-    return (
+    return(
 
       <div className="loading-page">
 
         <div className="loading-spinner"></div>
 
         <p>
-          Loading events...
+          Finding amazing events...
         </p>
 
       </div>
@@ -61,29 +79,40 @@ function Events() {
 
 
 
-  return (
+
+
+  return(
+
 
     <div className="events-page">
 
 
-      {/* HEADER */}
 
       <div className="events-header">
 
+
         <div>
 
+
           <span className="section-label">
-            EVENT DISCOVERY
+
+            DISCOVER EVENTS
+
           </span>
 
 
           <h1>
-            Explore Events
+
+            Upcoming Experiences 
+
           </h1>
 
 
           <p>
-            Discover exciting events happening around you.
+
+            Find conferences, weddings, concerts,
+            workshops and more.
+
           </p>
 
 
@@ -91,12 +120,19 @@ function Events() {
 
 
 
+
         <Link
+
           to="/create-event"
+
           className="primary-button"
+
         >
+
           + Create Event
+
         </Link>
+
 
 
       </div>
@@ -104,36 +140,57 @@ function Events() {
 
 
 
-      {/* EVENTS GRID */}
+
 
 
       {
+        events.length === 0 ?
 
-        events.length === 0 ? (
+
+        (
 
           <div className="empty-state">
 
+
             <h2>
-              No Events Yet
+
+              No Events Available
+
             </h2>
 
+
             <p>
-              Create your first event and start building experiences.
+
+              Be the first person to create an amazing event.
+
             </p>
 
 
+
             <Link
+
               to="/create-event"
+
               className="primary-button"
+
             >
-              Create Event
+
+              Create First Event
+
             </Link>
+
 
 
           </div>
 
 
-        ) : (
+        )
+
+
+        :
+
+
+        (
 
 
           <div className="events-grid">
@@ -144,29 +201,42 @@ function Events() {
             events.map((event)=>(
 
 
+
               <div
+
                 className="event-card"
+
                 key={event.id}
+
               >
 
 
-                <div className="event-image">
 
-                  🎉
+                <div className="event-card-banner">
+
+
+                  
+
 
                 </div>
 
 
 
 
-                <div className="event-content">
+
+                <div className="event-card-content">
+
 
 
                   <span className="event-category">
 
+
                     {event.category || "General"}
 
+
                   </span>
+
+
 
 
 
@@ -178,33 +248,69 @@ function Events() {
 
 
 
-                  <p>
 
-                    {event.description}
+
+                  <p className="event-description">
+
+
+                    {
+                      event.description.length > 120
+
+                      ?
+
+                      event.description.substring(0,120)
+                      + "..."
+
+                      :
+
+                      event.description
+                    }
+
 
                   </p>
 
 
 
+
+
+
                   <div className="event-info">
 
-                    <FaCalendar />
 
-                    {event.date}
+                    <FaCalendarAlt/>
+
+
+                    <span>
+
+                      {event.date}
+
+                    </span>
 
 
                   </div>
 
 
 
+
+
+
                   <div className="event-info">
 
-                    <FaMapMarkerAlt />
 
-                    {event.location}
+                    <FaMapMarkerAlt/>
+
+
+                    <span>
+
+                      {event.location}
+
+                    </span>
 
 
                   </div>
+
+
+
 
 
 
@@ -216,13 +322,16 @@ function Events() {
 
                   >
 
-                    View Details →
+                    View Event
+
+                    <FaArrowRight/>
 
                   </Link>
 
 
 
                 </div>
+
 
 
               </div>

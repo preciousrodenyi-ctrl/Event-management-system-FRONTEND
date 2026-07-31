@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 
 
@@ -39,7 +39,6 @@ function CreateEvent() {
 
 
 
-
   async function handleSubmit(e){
 
     e.preventDefault();
@@ -48,9 +47,7 @@ function CreateEvent() {
 
     setError("");
 
-
     try{
-
 
       await api.post(
         "/events",
@@ -64,6 +61,7 @@ function CreateEvent() {
     }catch(err){
 
       console.log(err);
+
 
       setError(
         err.response?.data?.error ||
@@ -81,23 +79,34 @@ function CreateEvent() {
 
 
 
-
   return (
 
     <div className="form-page">
 
 
+      <Link 
+        to="/events"
+        className="back-link"
+      >
+        ← Back to Events
+      </Link>
+
+
+
       <div className="event-form">
 
 
-        <h1>
-          Create New Event 🎉
-        </h1>
+        <div className="form-header">
 
+          <h1>
+            🎉 Create New Event
+          </h1>
 
-        <p>
-          Add your event details and share it with your audience.
-        </p>
+          <p>
+            Add your event details and share it with your audience.
+          </p>
+
+        </div>
 
 
 
@@ -115,7 +124,6 @@ function CreateEvent() {
 
 
 
-
         <form onSubmit={handleSubmit}>
 
 
@@ -130,7 +138,7 @@ function CreateEvent() {
 
             name="title"
 
-            placeholder="Enter event name"
+            placeholder="Example: Tech Conference 2026"
 
             value={formData.title}
 
@@ -139,7 +147,6 @@ function CreateEvent() {
             required
 
           />
-
 
 
 
@@ -152,7 +159,7 @@ function CreateEvent() {
 
             name="description"
 
-            placeholder="Describe your event"
+            placeholder="Tell people about your event..."
 
             rows="5"
 
@@ -163,8 +170,6 @@ function CreateEvent() {
             required
 
           />
-
-
 
 
 
@@ -179,7 +184,7 @@ function CreateEvent() {
 
             name="location"
 
-            placeholder="Event location"
+            placeholder="Example: Nairobi Convention Centre"
 
             value={formData.location}
 
@@ -191,10 +196,8 @@ function CreateEvent() {
 
 
 
-
-
           <label>
-            Date
+            Event Date
           </label>
 
 
@@ -211,8 +214,6 @@ function CreateEvent() {
             required
 
           />
-
-
 
 
 
@@ -234,32 +235,31 @@ function CreateEvent() {
           >
 
             <option value="">
-              Select category
+              Choose category
             </option>
 
-
-            <option value="Conference">
+            <option>
               Conference
             </option>
 
-
-            <option value="Wedding">
+            <option>
               Wedding
             </option>
 
-
-            <option value="Birthday">
+            <option>
               Birthday
             </option>
 
-
-            <option value="Concert">
+            <option>
               Concert
             </option>
 
-
-            <option value="Sports">
+            <option>
               Sports
+            </option>
+
+            <option>
+              Workshop
             </option>
 
 
@@ -268,17 +268,20 @@ function CreateEvent() {
 
 
 
-
           <button
+
+            className="primary-btn"
+
             disabled={loading}
+
           >
 
             {
               loading
               ?
-              "Creating..."
+              "Creating Event..."
               :
-              "Create Event"
+              "Create Event 🚀"
             }
 
 
@@ -293,7 +296,6 @@ function CreateEvent() {
 
 
     </div>
-
 
   );
 

@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { FaCalendarAlt, FaMapMarkerAlt, FaTag } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaTag,
+  FaArrowLeft
+} from "react-icons/fa";
 
 
 function EventDetails() {
@@ -18,13 +23,11 @@ function EventDetails() {
 
 
 
-
   useEffect(()=>{
 
     getEvent();
 
   },[]);
-
 
 
 
@@ -43,8 +46,8 @@ function EventDetails() {
 
       console.log(error);
 
-
-    }finally{
+    }
+    finally{
 
       setLoading(false);
 
@@ -54,22 +57,20 @@ function EventDetails() {
 
 
 
-
-
   async function deleteEvent(){
 
 
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this event?"
+      "Delete this event permanently?"
     );
 
 
-    if(!confirmDelete) return;
+    if(!confirmDelete)
+      return;
 
 
 
     try{
-
 
       await api.delete(
         `/events/${id}`
@@ -85,9 +86,7 @@ function EventDetails() {
 
     }
 
-
   }
-
 
 
 
@@ -101,7 +100,7 @@ function EventDetails() {
         <div className="loading-spinner"></div>
 
         <p>
-          Loading event...
+          Loading event details...
         </p>
 
       </div>
@@ -129,7 +128,9 @@ function EventDetails() {
           to="/events"
           className="primary-button"
         >
-          Back To Events
+
+          View Events
+
         </Link>
 
 
@@ -138,7 +139,6 @@ function EventDetails() {
     );
 
   }
-
 
 
 
@@ -153,13 +153,18 @@ function EventDetails() {
         to="/events"
         className="back-link"
       >
-        ← Back to Events
+
+        <FaArrowLeft /> 
+        Back to Events
+
       </Link>
 
 
 
 
+
       <div className="event-details-card">
+
 
 
         <div className="event-details-banner">
@@ -174,11 +179,13 @@ function EventDetails() {
         <div className="event-details-content">
 
 
+
           <span className="event-category">
 
             {event.category || "General"}
 
           </span>
+
 
 
 
@@ -192,14 +199,16 @@ function EventDetails() {
 
 
 
+
           <div className="event-details-info">
+
 
 
             <div>
 
               <FaCalendarAlt />
 
-              <div>
+              <section>
 
                 <strong>
                   Date
@@ -209,9 +218,10 @@ function EventDetails() {
                   {event.date}
                 </p>
 
-              </div>
+              </section>
 
             </div>
+
 
 
 
@@ -220,7 +230,7 @@ function EventDetails() {
 
               <FaMapMarkerAlt />
 
-              <div>
+              <section>
 
                 <strong>
                   Location
@@ -230,7 +240,7 @@ function EventDetails() {
                   {event.location}
                 </p>
 
-              </div>
+              </section>
 
             </div>
 
@@ -242,7 +252,7 @@ function EventDetails() {
 
               <FaTag />
 
-              <div>
+              <section>
 
                 <strong>
                   Category
@@ -252,13 +262,14 @@ function EventDetails() {
                   {event.category}
                 </p>
 
-              </div>
+              </section>
 
             </div>
 
 
 
           </div>
+
 
 
 
@@ -282,6 +293,8 @@ function EventDetails() {
 
 
 
+
+
           <div className="event-actions">
 
 
@@ -293,7 +306,7 @@ function EventDetails() {
 
             >
 
-              Edit Event
+               Edit Event
 
             </Link>
 
@@ -309,7 +322,7 @@ function EventDetails() {
 
             >
 
-              Delete Event
+               Delete Event
 
             </button>
 
@@ -321,7 +334,9 @@ function EventDetails() {
         </div>
 
 
+
       </div>
+
 
 
     </div>
