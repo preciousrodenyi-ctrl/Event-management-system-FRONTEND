@@ -1,94 +1,153 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { FaCalendarAlt, FaMapMarkerAlt, FaTag } from "react-icons/fa";
+
 
 function EventDetails() {
+
+
   const { id } = useParams();
+
   const navigate = useNavigate();
 
-  const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  useEffect(() => {
-    loadEvent();
-  }, [id]);
+  const [event,setEvent] = useState(null);
 
-  async function loadEvent() {
-    try {
-      const response = await api.get(`/events/${id}`);
+  const [loading,setLoading] = useState(true);
 
-      setEvent(response.data.event || response.data);
-    } catch (err) {
-      console.error(
-        "Event details error:",
-        err.response?.data || err.message
+
+
+
+  useEffect(()=>{
+
+    getEvent();
+
+  },[]);
+
+
+
+
+  async function getEvent(){
+
+    try{
+
+      const response = await api.get(
+        `/events/${id}`
       );
 
-      setError(
-        err.response?.data?.error ||
-        "Failed to load event."
-      );
-    } finally {
+      setEvent(response.data);
+
+
+    }catch(error){
+
+      console.log(error);
+
+
+    }finally{
+
       setLoading(false);
+
     }
+
   }
 
-  async function handleDelete() {
-    const confirmed = window.confirm(
+
+
+
+
+  async function deleteEvent(){
+
+
+    const confirmDelete = window.confirm(
       "Are you sure you want to delete this event?"
     );
 
-    if (!confirmed) {
-      return;
-    }
 
-    try {
-      await api.delete(`/events/${id}`);
+    if(!confirmDelete) return;
+
+
+
+    try{
+
+
+      await api.delete(
+        `/events/${id}`
+      );
+
 
       navigate("/events");
-    } catch (err) {
-      console.error(
-        "Delete event error:",
-        err.response?.data || err.message
-      );
 
-      setError(
-        err.response?.data?.error ||
-        "Failed to delete event."
-      );
+
+    }catch(error){
+
+      console.log(error);
+
     }
+
+
   }
 
-  if (loading) {
-    return (
-      <div className="loading">
-        Loading event...
-      </div>
-    );
-  }
 
-  if (error || !event) {
-    return (
-      <div className="event-not-found">
-        <h1>Event Not Found</h1>
+
+
+
+  if(loading){
+
+    return(
+
+      <div className="loading-page">
+
+        <div className="loading-spinner"></div>
 
         <p>
-          {error || "This event does not exist."}
+          Loading event...
         </p>
+
+      </div>
+
+    );
+
+  }
+
+
+
+
+
+  if(!event){
+
+    return(
+
+      <div className="empty-state">
+
+        <h2>
+          Event Not Found
+        </h2>
+
 
         <Link
           to="/events"
-          className="primary-btn"
+          className="primary-button"
         >
-          Back to Events
+          Back To Events
         </Link>
+
+
       </div>
+
     );
+
   }
 
-  return (
+
+
+
+
+  return(
+
+
     <div className="event-details-page">
+
 
       <Link
         to="/events"
@@ -97,78 +156,180 @@ function EventDetails() {
         ← Back to Events
       </Link>
 
+
+
+
       <div className="event-details-card">
 
+
         <div className="event-details-banner">
+
           
+
         </div>
+
+
+
 
         <div className="event-details-content">
 
+
           <span className="event-category">
-            {event.category || "Event"}
+
+            {event.category || "General"}
+
           </span>
 
+
+
+
           <h1>
+
             {event.title}
+
           </h1>
+
+
+
 
           <div className="event-details-info">
 
-            <div>
-              <strong> Location</strong>
-              <p>{event.location}</p>
-            </div>
 
             <div>
-              <strong>Date</strong>
-              <p>{event.date}</p>
+
+              <FaCalendarAlt />
+
+              <div>
+
+                <strong>
+                  Date
+                </strong>
+
+                <p>
+                  {event.date}
+                </p>
+
+              </div>
+
             </div>
+
+
+
+
+            <div>
+
+              <FaMapMarkerAlt />
+
+              <div>
+
+                <strong>
+                  Location
+                </strong>
+
+                <p>
+                  {event.location}
+                </p>
+
+              </div>
+
+            </div>
+
+
+
+
+
+            <div>
+
+              <FaTag />
+
+              <div>
+
+                <strong>
+                  Category
+                </strong>
+
+                <p>
+                  {event.category}
+                </p>
+
+              </div>
+
+            </div>
+
+
 
           </div>
 
+
+
+
+
           <div className="event-description">
+
 
             <h2>
               About This Event
             </h2>
 
+
             <p>
               {event.description}
             </p>
 
+
           </div>
 
-          {error && (
-            <p className="error">
-              {error}
-            </p>
-          )}
+
+
 
           <div className="event-actions">
 
+
             <Link
-              to={`/edit-event/${event.id}`}
+
+              to={`/events/${event.id}/edit`}
+
               className="edit-button"
+
             >
+
               Edit Event
+
             </Link>
 
+
+
+
+
             <button
-              onClick={handleDelete}
+
+              onClick={deleteEvent}
+
               className="delete-button"
+
             >
+
               Delete Event
+
             </button>
+
 
           </div>
 
+
+
         </div>
+
 
       </div>
 
+
     </div>
+
+
   );
+
 }
+
 
 export default EventDetails;

@@ -1,191 +1,253 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import { FaMapMarkerAlt, FaCalendar } from "react-icons/fa";
+
 
 function Events() {
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
+
 
   useEffect(() => {
-    loadEvents();
+
+    fetchEvents();
+
   }, []);
 
-  async function loadEvents() {
+
+
+  async function fetchEvents(){
+
     try {
+
       const response = await api.get("/events");
 
-      setEvents(
-        response.data.events || response.data
-      );
+      setEvents(response.data);
 
-    } catch (err) {
-      console.error(
-        "Events error:",
-        err.response?.data || err.message
-      );
+    } catch(error){
 
-      setError(
-        err.response?.data?.error ||
-        "Failed to load events."
-      );
+      console.log(error);
 
     } finally {
+
       setLoading(false);
+
     }
+
   }
 
-  async function deleteEvent(id) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this event?"
-    );
 
-    if (!confirmed) return;
 
-    try {
-      await api.delete(`/events/${id}`);
+  if(loading){
 
-      setEvents(
-        events.filter((event) => event.id !== id)
-      );
-
-    } catch (err) {
-      setError(
-        err.response?.data?.error ||
-        "Failed to delete event."
-      );
-    }
-  }
-
-  if (loading) {
     return (
-      <div className="loading">
-        Loading events...
+
+      <div className="loading-page">
+
+        <div className="loading-spinner"></div>
+
+        <p>
+          Loading events...
+        </p>
+
       </div>
+
     );
+
   }
+
+
 
   return (
+
     <div className="events-page">
+
+
+      {/* HEADER */}
 
       <div className="events-header">
 
         <div>
-          <h1>My Events</h1>
+
+          <span className="section-label">
+            EVENT DISCOVERY
+          </span>
+
+
+          <h1>
+            Explore Events
+          </h1>
+
 
           <p>
-            Create and manage all your events.
+            Discover exciting events happening around you.
           </p>
+
+
         </div>
+
+
 
         <Link
           to="/create-event"
-          className="primary-btn"
+          className="primary-button"
         >
           + Create Event
         </Link>
 
+
       </div>
 
-      {error && (
-        <p className="error">
-          {error}
-        </p>
-      )}
 
-      {events.length === 0 ? (
 
-        <div className="empty-state">
 
-          <h2>
-            No events yet
-          </h2>
+      {/* EVENTS GRID */}
 
-          <p>
-            Create your first event.
-          </p>
 
-          <Link
-            to="/create-event"
-            className="primary-btn"
-          >
-            Create Event
-          </Link>
+      {
 
-        </div>
+        events.length === 0 ? (
 
-      ) : (
+          <div className="empty-state">
 
-        <div className="event-grid">
+            <h2>
+              No Events Yet
+            </h2>
 
-          {events.map((event) => (
+            <p>
+              Create your first event and start building experiences.
+            </p>
 
-            <div
-              className="event-card"
-              key={event.id}
+
+            <Link
+              to="/create-event"
+              className="primary-button"
             >
+              Create Event
+            </Link>
 
-              <div className="event-card-content">
 
-                <span className="event-category">
-                  {event.category || "Event"}
-                </span>
+          </div>
 
-                <h2>
-                  {event.title}
-                </h2>
 
-                <p>
-                  {event.description}
-                </p>
+        ) : (
 
-                <p>
-                  {event.location}
-                </p>
 
-                <p>
-                  {event.date}
-                </p>
+          <div className="events-grid">
 
-                <div className="event-actions">
 
-                  <Link
-                    to={`/events/${event.id}`}
-                    className="view-event-btn"
-                  >
-                    View
-                  </Link>
+          {
 
-                  <Link
-                    to={`/edit-event/${event.id}`}
-                    className="edit-button"
-                  >
-                    Edit
-                  </Link>
+            events.map((event)=>(
 
-                  <button
-                    onClick={() =>
-                      deleteEvent(event.id)
-                    }
-                    className="delete-button"
-                  >
-                    Delete
-                  </button>
+
+              <div
+                className="event-card"
+                key={event.id}
+              >
+
+
+                <div className="event-image">
+
+                  🎉
 
                 </div>
 
+
+
+
+                <div className="event-content">
+
+
+                  <span className="event-category">
+
+                    {event.category || "General"}
+
+                  </span>
+
+
+
+                  <h2>
+
+                    {event.title}
+
+                  </h2>
+
+
+
+                  <p>
+
+                    {event.description}
+
+                  </p>
+
+
+
+                  <div className="event-info">
+
+                    <FaCalendar />
+
+                    {event.date}
+
+
+                  </div>
+
+
+
+                  <div className="event-info">
+
+                    <FaMapMarkerAlt />
+
+                    {event.location}
+
+
+                  </div>
+
+
+
+                  <Link
+
+                    to={`/events/${event.id}`}
+
+                    className="event-details-link"
+
+                  >
+
+                    View Details →
+
+                  </Link>
+
+
+
+                </div>
+
+
               </div>
 
-            </div>
 
-          ))}
+            ))
 
-        </div>
+          }
 
-      )}
+
+          </div>
+
+
+        )
+
+      }
+
+
 
     </div>
+
+
   );
+
 }
+
 
 export default Events;

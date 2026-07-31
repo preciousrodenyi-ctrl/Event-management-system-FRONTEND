@@ -2,132 +2,302 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
+
 function CreateEvent() {
+
   const navigate = useNavigate();
 
+
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    location: "",
-    date: "",
-    category: "",
+
+    title:"",
+    description:"",
+    location:"",
+    date:"",
+    category:""
+
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  function handleChange(e) {
+  const [error,setError] = useState("");
+
+  const [loading,setLoading] = useState(false);
+
+
+
+  function handleChange(e){
+
     setFormData({
+
       ...formData,
-      [e.target.name]: e.target.value,
+
+      [e.target.name]: e.target.value
+
     });
+
   }
 
-  async function handleSubmit(e) {
+
+
+
+  async function handleSubmit(e){
+
     e.preventDefault();
 
     setLoading(true);
+
     setError("");
 
-    try {
-      await api.post("/events", formData);
 
-      alert(" Event created successfully!");
+    try{
+
+
+      await api.post(
+        "/events",
+        formData
+      );
+
 
       navigate("/events");
 
-    } catch (err) {
-      console.error(err);
+
+    }catch(err){
+
+      console.log(err);
 
       setError(
         err.response?.data?.error ||
-        "Failed to create event."
+        "Unable to create event"
       );
-    } finally {
+
+
+    }finally{
+
       setLoading(false);
+
     }
+
   }
 
+
+
+
   return (
-    <div className="create-event-page">
 
-      <form
-        className="create-event-form"
-        onSubmit={handleSubmit}
-      >
+    <div className="form-page">
 
-        <h1>Create New Event</h1>
 
-        {error && (
-          <p className="error">{error}</p>
-        )}
+      <div className="event-form">
 
-        <label>Title</label>
 
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
+        <h1>
+          Create New Event 🎉
+        </h1>
 
-        <label>Description</label>
 
-        <textarea
-          name="description"
-          rows="5"
-          value={formData.description}
-          onChange={handleChange}
-        />
+        <p>
+          Add your event details and share it with your audience.
+        </p>
 
-        <label>Location</label>
 
-        <input
-          type="text"
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-        />
 
-        <label>Date</label>
+        {
+          error && (
 
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          required
-        />
+            <div className="error-message">
 
-        <label>Category</label>
+              {error}
 
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          <option value="">Select Category</option>
-          <option value="Conference">Conference</option>
-          <option value="Workshop">Workshop</option>
-          <option value="Music">Music</option>
-          <option value="Sports">Sports</option>
-          <option value="Technology">Technology</option>
-          <option value="Networking">Networking</option>
-          <option value="Education">Education</option>
-        </select>
-        
-        <button
-          type="submit"
-          className="primary-btn"
-          disabled={loading}
-        >
-          {loading ? "Creating..." : "Create Event"}
-        </button>
+            </div>
 
-      </form>
+          )
+        }
+
+
+
+
+        <form onSubmit={handleSubmit}>
+
+
+          <label>
+            Event Title
+          </label>
+
+
+          <input
+
+            type="text"
+
+            name="title"
+
+            placeholder="Enter event name"
+
+            value={formData.title}
+
+            onChange={handleChange}
+
+            required
+
+          />
+
+
+
+
+          <label>
+            Description
+          </label>
+
+
+          <textarea
+
+            name="description"
+
+            placeholder="Describe your event"
+
+            rows="5"
+
+            value={formData.description}
+
+            onChange={handleChange}
+
+            required
+
+          />
+
+
+
+
+
+          <label>
+            Location
+          </label>
+
+
+          <input
+
+            type="text"
+
+            name="location"
+
+            placeholder="Event location"
+
+            value={formData.location}
+
+            onChange={handleChange}
+
+            required
+
+          />
+
+
+
+
+
+          <label>
+            Date
+          </label>
+
+
+          <input
+
+            type="date"
+
+            name="date"
+
+            value={formData.date}
+
+            onChange={handleChange}
+
+            required
+
+          />
+
+
+
+
+
+          <label>
+            Category
+          </label>
+
+
+          <select
+
+            name="category"
+
+            value={formData.category}
+
+            onChange={handleChange}
+
+            required
+
+          >
+
+            <option value="">
+              Select category
+            </option>
+
+
+            <option value="Conference">
+              Conference
+            </option>
+
+
+            <option value="Wedding">
+              Wedding
+            </option>
+
+
+            <option value="Birthday">
+              Birthday
+            </option>
+
+
+            <option value="Concert">
+              Concert
+            </option>
+
+
+            <option value="Sports">
+              Sports
+            </option>
+
+
+          </select>
+
+
+
+
+
+          <button
+            disabled={loading}
+          >
+
+            {
+              loading
+              ?
+              "Creating..."
+              :
+              "Create Event"
+            }
+
+
+          </button>
+
+
+
+        </form>
+
+
+      </div>
+
+
     </div>
+
+
   );
+
 }
+
 
 export default CreateEvent;

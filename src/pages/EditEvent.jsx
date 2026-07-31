@@ -3,8 +3,13 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import api from "../services/api";
 
 function EditEvent() {
+
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -14,233 +19,323 @@ function EditEvent() {
     category: "",
   });
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    loadEvent();
-  }, [id]);
+    fetchEvent();
+  }, []);
 
-  async function loadEvent() {
+
+  async function fetchEvent() {
+
     try {
+
       const response = await api.get(`/events/${id}`);
 
-      const event =
-        response.data.event || response.data;
-
       setFormData({
-        title: event.title || "",
-        description: event.description || "",
-        location: event.location || "",
-        date: event.date || "",
-        category: event.category || "",
+        title: response.data.title || "",
+        description: response.data.description || "",
+        location: response.data.location || "",
+        date: response.data.date || "",
+        category: response.data.category || "",
       });
 
-    } catch (err) {
-      console.error(
-        "Load event error:",
-        err.response?.data || err.message
-      );
+    } catch (error) {
 
-      setError(
-        err.response?.data?.error ||
-        "Failed to load event."
-      );
+      console.error(error);
+
+      setError("Unable to load event.");
 
     } finally {
+
       setLoading(false);
+
     }
+
   }
 
+
+
   function handleChange(e) {
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
   }
 
+
+
+
   async function handleSubmit(e) {
+
     e.preventDefault();
 
     setSaving(true);
+
     setError("");
 
     try {
-      await api.patch(
+
+      await api.put(
         `/events/${id}`,
         formData
       );
 
+
+      alert("✅ Event updated successfully!");
+
       navigate(`/events/${id}`);
 
-    } catch (err) {
-      console.error(
-        "Update event error:",
-        err.response?.data || err.message
-      );
+
+    } catch (error) {
+
+      console.error(error);
 
       setError(
-        err.response?.data?.error ||
-        err.response?.data?.message ||
+        error.response?.data?.error ||
         "Failed to update event."
       );
 
     } finally {
+
       setSaving(false);
+
     }
+
   }
+
+
 
   if (loading) {
+
     return (
+
       <div className="loading-page">
+
         <div className="loading-spinner"></div>
-        <p>Loading event...</p>
+
+        <h2>Loading Event...</h2>
+
       </div>
+
     );
+
   }
 
+
+
   return (
+
     <div className="form-page">
 
-      <Link
-        to={`/events/${id}`}
-        className="back-link"
-      >
-        ← Back to Event
-      </Link>
 
       <form
         className="event-form"
         onSubmit={handleSubmit}
       >
 
-        <h1>
-          Edit Event
-        </h1>
 
-        <p>
-          Update your event information below.
+        <Link
+          to={`/events/${id}`}
+          className="back-link"
+        >
+          ← Cancel
+        </Link>
+
+
+
+        <p className="section-label">
+          EDIT EVENT
         </p>
 
+
+        <h1>
+          Update Event
+        </h1>
+
+
+        <p>
+          Modify your event details below.
+        </p>
+
+
+
         {error && (
+
           <div className="error-message">
             {error}
           </div>
+
         )}
+
+
 
         <label>
           Event Title
         </label>
 
+
         <input
+
           type="text"
+
           name="title"
+
           value={formData.title}
+
           onChange={handleChange}
+
           required
+
         />
+
+
 
         <label>
           Description
         </label>
 
+
         <textarea
-          name="description"
+
           rows="5"
+
+          name="description"
+
           value={formData.description}
+
           onChange={handleChange}
+
           required
+
         />
+
+
 
         <label>
           Location
         </label>
 
+
         <input
+
           type="text"
+
           name="location"
+
           value={formData.location}
+
           onChange={handleChange}
+
           required
+
         />
+
+
+
+        <label>
+          Date
+        </label>
+
+
+        <input
+
+          type="date"
+
+          name="date"
+
+          value={formData.date}
+
+          onChange={handleChange}
+
+          required
+
+        />
+
+
 
         <label>
           Category
         </label>
 
+
         <select
+
           name="category"
+
           value={formData.category}
+
           onChange={handleChange}
+
           required
+
         >
+
           <option value="">
-            Select a category
+            Select Category
           </option>
 
           <option value="Technology">
             Technology
           </option>
 
-          <option value="Music">
-            Music
-          </option>
-
           <option value="Business">
             Business
-          </option>
-
-          <option value="Sports">
-            Sports
           </option>
 
           <option value="Education">
             Education
           </option>
 
-          <option value="Social">
-            Social
+          <option value="Music">
+            Music
           </option>
+
+          <option value="Sports">
+            Sports
+          </option>
+
+          <option value="Networking">
+            Networking
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
         </select>
 
-        <label>
-          Date
-        </label>
 
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          required
-        />
 
-        <div className="form-actions">
+        <button
 
-          <Link
-            to={`/events/${id}`}
-            className="cancel-button"
-          >
-            Cancel
-          </Link>
+          type="submit"
 
-          <button
-            type="submit"
-            className="primary-btn"
-            disabled={saving}
-          >
-            {saving
-              ? "Saving Changes..."
-              : "Save Changes"}
-          </button>
+          className="primary-button"
 
-        </div>
+          disabled={saving}
+
+        >
+
+          {
+            saving
+            ? "Saving..."
+            : "Save Changes"
+          }
+
+
+        </button>
+
 
       </form>
 
+
     </div>
+
   );
+
 }
+
 
 export default EditEvent;

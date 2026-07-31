@@ -6,25 +6,37 @@ function Login() {
 
   const navigate = useNavigate();
 
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
 
+
+
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+
 
 
 
   function handleChange(e) {
 
     setFormData({
+
       ...formData,
+
       [e.target.name]: e.target.value,
+
     });
 
   }
+
+
 
 
 
@@ -32,11 +44,15 @@ function Login() {
 
     e.preventDefault();
 
-    setError("");
+
     setLoading(true);
+
+    setError("");
+
 
 
     try {
+
 
       const response = await api.post(
         "/login",
@@ -44,39 +60,45 @@ function Login() {
       );
 
 
-      // Save logged in user
+
       localStorage.setItem(
         "user",
         JSON.stringify(response.data.user)
       );
 
 
-      console.log(
-        "Login successful:",
-        response.data
-      );
+
+      alert(`Welcome back, ${response.data.user.username}! 🎉`);
+
 
 
       navigate("/dashboard");
 
 
-    } catch (error) {
+
+    } catch (err) {
+
 
       console.error(
-        "Login error:",
-        error.response?.data || error.message
+        err.response?.data || err.message
       );
 
 
+
       setError(
-        error.response?.data?.error ||
-        "Invalid username or password"
+
+        err.response?.data?.error ||
+
+        "Invalid username or password."
+
       );
 
 
     } finally {
 
+
       setLoading(false);
+
 
     }
 
@@ -84,35 +106,54 @@ function Login() {
 
 
 
+
+
   return (
 
     <div className="auth-page">
 
-      <div className="auth-container">
 
-        <form
-          className="auth-card"
-          onSubmit={handleSubmit}
-        >
-
-          <h1>
-            Welcome Back
-          </h1>
+      <div className="auth-card">
 
 
-          <p>
-            Login to continue to EventHub.
-          </p>
+        <p className="section-label">
+          EVENTHUB LOGIN
+        </p>
 
 
 
-          {error && (
 
-            <div className="error-message">
-              {error}
-            </div>
+        <h1>
+          👋 Welcome Back
+        </h1>
 
-          )}
+
+
+
+        <p className="auth-subtitle">
+
+          Login to manage your events.
+
+        </p>
+
+
+
+
+        {error && (
+
+          <div className="error-message">
+
+            {error}
+
+          </div>
+
+        )}
+
+
+
+
+
+        <form onSubmit={handleSubmit}>
 
 
 
@@ -139,9 +180,12 @@ function Login() {
 
 
 
+
+
           <label>
             Password
           </label>
+
 
 
 
@@ -164,9 +208,12 @@ function Login() {
 
               onChange={handleChange}
 
+              minLength="6"
+
               required
 
             />
+
 
 
 
@@ -186,6 +233,7 @@ function Login() {
                 : "Show"
               }
 
+
             </button>
 
 
@@ -194,44 +242,73 @@ function Login() {
 
 
 
+
           <button
 
             type="submit"
 
-            className="auth-btn"
+            className="auth-button"
 
             disabled={loading}
 
           >
 
+
             {
+
               loading
+
               ? "Logging in..."
+
               : "Login"
+
             }
+
 
           </button>
 
 
 
 
-          <p className="auth-footer">
-
-            Don't have an account?
-
-
-            <Link to="/signup">
-
-              {" "}Create an account
-
-            </Link>
-
-
-          </p>
-
-
-
         </form>
+
+
+
+
+
+        <div className="auth-footer">
+
+
+          <Link to="/forgot-password">
+
+            Forgot Password?
+
+          </Link>
+
+
+
+
+          <br />
+          <br />
+
+
+
+          Don't have an account?
+
+
+
+          <Link to="/signup">
+
+            {" "}Create Account
+
+          </Link>
+
+
+
+
+        </div>
+
+
 
 
       </div>
