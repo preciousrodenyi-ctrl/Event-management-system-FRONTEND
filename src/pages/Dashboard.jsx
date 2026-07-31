@@ -55,7 +55,7 @@ function Dashboard() {
           <h1>
             Welcome back,
             {" "}
-            {user?.username || "User"} 👋
+            {user?.username || "User"} 
           </h1>
 
           <p>
@@ -78,7 +78,7 @@ function Dashboard() {
         <div className="dashboard-stat-card">
 
           <div className="stat-icon">
-            📅
+            
           </div>
 
           <div>
@@ -94,7 +94,7 @@ function Dashboard() {
         <div className="dashboard-stat-card">
 
           <div className="stat-icon">
-            ⭐
+            
           </div>
 
           <div>
@@ -150,7 +150,7 @@ function Dashboard() {
             className="quick-action-card"
           >
 
-            <span>➕</span>
+            <span></span>
 
             <h3>Create Event</h3>
 
@@ -165,7 +165,7 @@ function Dashboard() {
             className="quick-action-card"
           >
 
-            <span>🎉</span>
+            <span></span>
 
             <h3>Browse Events</h3>
 
@@ -198,7 +198,7 @@ function Dashboard() {
           <div className="empty-state">
 
             <div className="empty-icon">
-              📭
+              
             </div>
 
             <h3>
@@ -242,11 +242,11 @@ function Dashboard() {
                 </p>
 
                 <p className="event-location">
-                  📍 {event.location}
+                   {event.location}
                 </p>
 
                 <p>
-                  📅 {event.date}
+                   {event.date}
                 </p>
 
                 <Link
