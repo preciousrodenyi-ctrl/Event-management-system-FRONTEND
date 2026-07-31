@@ -39,71 +39,35 @@ function Login() {
 
 
 
+async function handleSubmit(e) {
+  e.preventDefault();
 
-  async function handleSubmit(e) {
+  setLoading(true);
+  setError("");
 
-    e.preventDefault();
+  try {
+    const response = await api.post("/login", formData);
 
+    console.log("Login response:", response.data);
 
-    setLoading(true);
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
 
-    setError("");
+    navigate("/dashboard");
 
+  } catch (err) {
+    console.error(err.response?.data || err.message);
 
-
-    try {
-
-
-      const response = await api.post(
-        "/login",
-        formData
-      );
-
-
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
-      );
-
-
-
-      alert(`Welcome back, ${response.data.user.username}! 🎉`);
-
-
-
-      navigate("/dashboard");
-
-
-
-    } catch (err) {
-
-
-      console.error(
-        err.response?.data || err.message
-      );
-
-
-
-      setError(
-
-        err.response?.data?.error ||
-
-        "Invalid username or password."
-
-      );
-
-
-    } finally {
-
-
-      setLoading(false);
-
-
-    }
-
+    setError(
+      err.response?.data?.error ||
+      "Invalid username or password."
+    );
+  } finally {
+    setLoading(false);
   }
-
+}
 
 
 
